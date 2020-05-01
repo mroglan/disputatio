@@ -1,0 +1,66 @@
+
+.to-left {
+	top: auto;
+	left: -20px;
+}
+
+.hidden {
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
+#search_results_1 {
+	display: none;
+	max-height: 250px;
+	overflow-y: scroll;
+}
+
+.search_result_image {
+	width: 25%;
+	border-radius: 50%;
+}
+
+.search_media h3, .search_media button {
+	cursor: pointer;
+}
+
+.search_media_btn {
+	float: right;
+	z-index: 12;
+	margin: 1rem 1rem 0 0;
+}
+
+.p_link {
+	cursor: pointer;
+}
+
+.p_link:hover {
+	text-decoration: underline;
+}
+
+.friend_pic_div {
+	width: 50%;
+}
+
+#friend_carousel {
+	height: 200px;
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: invert(1);
+}
+
+.carousel-control-next {
+	right: -3rem;
+}
+
+.carousel-control-prev {
+	left: -3rem;
+}
+
+.carousel-inner h3 {
+	cursor: pointer;
+}
+

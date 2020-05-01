@@ -1,0 +1,60 @@
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<div class="container" style="background:rgba(191,172,172,.5);min-height:100vh">
+			<div class="row pt-5" id="profile-header">
+				<div class="col-lg-4">
+					<div class="w-100 overflow-hidden rounded-circle border" id="profile-pic-div">
+						<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= profile.picture ? profile.picture : '/images/blank_profile.png' %>">
+					</div>
+				</div>
+				<div class="col-lg-8 col-xl-6">
+					<div class="card bg-transparent border-0 h-100">
+						<div class="card-body">
+							<h1 class="display-1 card-title" id="friend-btn-holder">
+								<%= profile.name %>
+								<button type="button" class="btn friend-button <%= isFriend ? 'btn-danger' : 'btn-success' %>" value="<%= isFriend ? 'unfriend' : 'friend' %>">
+									<%= isFriend ? 'Unfriend' : 'Friend' %>
+								</button>
+							</h1>
+							<h4 class="card-subtitle" id="contact-btn-holder">
+								Status: <%= profile.status ? profile.status : 'None' %>
+								<% if(contact) { %>
+									<% if(!contact.reserved || isFriend) { %>
+										<button type="button" class="btn btn-secondary contact-btn" data-toggle="modal" data-target="#contactModal">View Contact</button>
+										<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModal" aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title">Contact Info</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body">
+														Hello
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									<% } %>
+								<% } %>
+							</h4>
+							<hr class="bg-primary">
+							<h6><%= user.bio %></h6>
+						</div>
+						<div class="card-footer">
+							<a href="friends" class="text-dark"><p id="friended_num" class="font-weight-bold"></p></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<input type="hidden" id="profile-id" value="<%= profile._id %>">

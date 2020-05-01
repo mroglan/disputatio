@@ -1,0 +1,292 @@
+
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<form method="POST" action="">
+			<div class="container" style="background:rgba(191,172,172,.5);min-height:100vh">
+				<div class="row">
+					<div class="col-12 bg-primary pt-5">
+						<h1 class="display-3 text-center text-white">Your Profile</h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-sm-6 mx-sm-auto position-relative">
+						<button id="pic_btn" type="button" class="btn btn-primary position-absolute" style="top:1rem;z-index:12"><i class="fas fa-exchange-alt"></i></button>
+						<div class="w-100 d-inline-block overflow-hidden rounded-circle border" id="profile-pic-div">
+							<img class="img-fluid" style="min-width:100%;min-height:100%" id="user_picture" src="<%= user.picture ? user.picture : '/images/blank_profile.png' %>">
+						</div>
+						<div class="hidden">
+							<input id="pic_file" type="file">
+						</div>
+					</div>
+					<div class="col-lg-8">
+						<div class="rounded-pill border h-100" id="user_info">
+							<% if(typeof user_errors != 'undefined') { %> 
+								<% user_errors.forEach(function(error) { %>
+									<div class="alert alert-warning alert-dismissible fade show" role="alert">
+										<%= error.msg %>
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								<% }); %>
+							<% } %>
+							<div class="mt-lg-5 mt-sm-3 px-xl-5 px-sm-3 pt-5 form-group row">
+								<label for="name" class="col-lg-2 col-form-label"><h3>Name</h3></label>
+								<div class="col-lg-10">
+									<input type="text" value="<%= user.name %>" name="name" id="name" class="form-control bg-transparent border-primary" required>
+								</div>
+							</div>
+							<div class="px-xl-5 px-sm-3 form-group row">
+								<label for="email" class="col-lg-2 col-form-label"><h3>Email</h3></label>
+								<div class="col-lg-10">
+									<input type="text" value="<%= user.email %>" name="email" id="email" class="form-control bg-transparent border-secondary" disabled>
+									<small class="text-muted">Email cannot be changed</small>
+								</div>
+							</div>
+							<div class="px-xl-5 px-sm-3 form-group row">
+								<label for="status" class="col-lg-2 col-form-label"><h3>Status</h3></label>
+								<div class="col-lg-4">
+									<input type="text" value="<%= user.status ? user.status : '' %>" name="status" id="status" class="form-control bg-transparent border-primary">
+									<small class="text-muted">Must be 10 characters or less</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-7">
+						<div class="card w-100 rounded-lg">
+							<div class="card-header">
+								<div class="row no-gutters">
+									<div class="col-6">
+										<h3 class="card-title">Contact Info</h3>
+									</div>
+									<div class="col-6 text-right">
+										<button type="button" id="toggle_contact_body" class="btn btn-primary" value="hidden">Show</button>
+									</div>
+								</div>
+								<div class="card-subtitle">
+									<span>Visible to: </span>
+									<% if(!contact || contact.reserved == 'false') { %>
+										<button type="button" id="reserve_button" name="reserve_button" class="btn btn-primary" value="false" data-toggle="tooltip" data-placement="right" data-html="true" title="Make contact visible <br>to anyone or just friends">Anyone</button>
+									<% } else { %>
+										<button type="button" id="reserve_button" name="reserve_button" class="btn btn-danger" value="true" data-toggle="tooltip" data-placement="right" data-html="true" title="Make contact visible <br>to anyone or just friends">Only Friends</button>
+									<% } %>
+									<input type="hidden" name="reserve_option" id="reserve_option">
+								</div>
+							</div>
+							<div class="card-body" id="contact-body" style="display:none">
+								<div class="row no-gutters">
+									<div class="col-xl-6">
+										<div class="row no-gutters">
+											<label for="contact_first_name" class="col-lg-4 col-form-label">First Name</label>
+											<div class="col-lg-8 col-sm-10">
+												<input type="text" value="<%= contact ? contact.first_name : '' %>" name="contact_first_name" id="contact_first_name" class="form-control bg-transparent border-primary">
+												<small class="text-muted">Required</small>
+											</div>
+										</div>
+									</div>
+									<div class="col-xl-6 pl-xl-3 mt-3 mt-xl-0">
+										<div class="row no-gutters">
+											<label for="contact_last_name" class="col-lg-4 col-form-label">Last Name</label>
+											<div class="col-lg-8 col-sm-10">
+												<input type="text" value="<%= contact ? contact.last_name : '' %>" name="contact_last_name" id="contact_last_name" class="form-control bg-transparetn border-primary">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row no-gutters mt-3">
+									<label for="contact_job" class="col-lg-2 col-form-label">Job Title</label>
+									<div class="col-lg-10">
+										<input type="text" value="<%= contact ? contact.job : '' %>" name="contact_job" id="contact_job" class="form-control bg-transparent border-primary">
+									</div>
+								</div>
+								<div class="row no-gutters mt-3">
+									<label for="contact_email" class="col-lg-2 col-form-label">Email</label>
+									<div class="col-lg-10">
+										<input type="email" value="<%= contact ? contact.email : user.email %>" name="contact_email" id="contact_email" class="form-control bg-transparent border-primary">
+									</div>
+								</div>
+								<hr class="bg-light">
+								<div>
+									<p>Phone(s) 
+									<button type="button" class="btn" id="add_phone_btn"><span class="text-success" style="vertical-align:top"><i class="fas fa-plus-square"></i></span></button>
+									<button type="button" class="btn" id="remove_phone_btn"><span class="text-danger" style="vertical-align:top"><i class="fas fa-minus-square"></i></span></button>
+									</p>
+									<ul class="list-group list-group-flush" id="phone_list">
+										<% if(!contact) { %>
+											<li class="list-group-item" id="phone_list_item">
+												<div class="row no-gutters">
+													<div class="col-md-4">
+														<select class="form-control bg-transparent border-primary" name="phone_name_1" type="select" placeholder="Type">
+															<option value="home">Home</option>
+															<option value="mobile">Mobile</option>
+															<option value="work">Work</option>
+															<option value="other">Other</option>
+														</select>
+													</div>
+													<div class="col-md-8 pl-3">
+														<input type="tel" name="phone_number_1" class="form-control bg-transparent border-primary" placeholder="555-555-5555">
+													</div>
+												</div>
+											</li>
+										<% } else { %>
+											<% contact.phones.forEach(function(phone, index) { %>
+												<li class="list-group-item" id="<%= index == 0 ? 'phone_list_item' : '' %>">
+													<div class="row no-gutters">
+														<div class="col-md-4">
+															<select class="form-control bg-transparent border-primary" name="phone_name_<%= index + 1%>" type="select" placeholder="Type">
+																<% if(phone.name == 'home') { %>
+																	<option value="home" selected>Home</option>
+																	<option value="mobile">Mobile</option>
+																	<option value="work">Work</option>
+																	<option value="other">Other</option>
+																<% } else if(phone.name == 'mobile') { %>
+																	<option value="home">Home</option>
+																	<option value="mobile" selected>Mobile</option>
+																	<option value="work">Work</option>
+																	<option value="other">Other</option>
+																<% } else if(phone.name == 'work') { %>
+																	<option value="home">Home</option>
+																	<option value="mobile">Mobile</option>
+																	<option value="work" selected>Work</option>
+																	<option value="other">Other</option>
+																<% } else { %>
+																	<option value="home">Home</option>
+																	<option value="mobile">Mobile</option>
+																	<option value="work">Work</option>
+																	<option value="other" selected>Other</option>
+																<% } %>
+															</select>
+														</div>
+														<div class="col-md-8 pl-3">
+															<input type="tel" name="phone_number_<%= index + 1 %>" class="form-control bg-transparent border-primary" value="<%= phone.number %>">
+														</div>
+													</div>
+												</li>
+											<% }); %>
+										<% } %> 
+									</ul>
+									<input type="hidden" name="phone_length" id="phone_length">
+								</div>
+								<div class="row no-gutters mt-3">
+									<label for="address" class="col-lg-2 col-form-label">Address</label>
+									<div class="col-lg-10">
+										<textarea type="text" name="address" id="address" rows="3" class="form-control bg-transparent border-primary"><%= contact ? contact.address : '' %></textarea>
+									</div>
+								</div>
+								<div class="mt-3">
+									<p>Additional Categories 
+									<button type="button" class="btn" id="add_cat_btn"><span class="text-success" style="vertical-align:top"><i class="fas fa-plus-square"></i></span></button>
+									<button type="button" class="btn" id="remove_cat_btn"><span class="text-danger" style="vertical-align:top"><i class="fas fa-minus-square"></i></span></button>
+									</p>
+									<ul class="list-group list-group-flush" id="cat_list">
+										<% if(!contact) { %>
+											<li class="list-group-item" id="cat_list_item">
+												<div class="row no-gutters">
+													<div class="col-md-4">
+														<input type="text" class="form-control bg-transparent border-primary" name="cat_name_1" placeholder="Category name">
+													</div>
+													<div class="col-md-8 pl-3">
+														<input type="text" class="form-control bg-transparent border-primary w-100" name="cat_detail_1" placeholder="Category details">
+													</div>
+												</div>
+											</li>
+										<% } else { %>
+											<% contact.other.forEach(function(category, index) { %>
+												<li class="list-group-item" id="<%= index == 0 ? 'cat_list_item' : '' %>">
+													<div class="row no-gutters">
+														<div class="col-md-4">
+															<input type="text" class="form-control bg-transparent border-primary" name="cat_name_<%= index + 1 %>" value="<%= category.name %>">
+														</div>
+														<div class="col-md-8 pl-3">
+															<input type="text" class="form-control bg-transparent border-primary w-100" name="cat_detail_<%= index + 1 %>" value="<%= category.details %>">
+														</div>
+													</div>
+												</li>
+											<% }); %>
+										<% } %>
+									</ul>
+									<input type="hidden" name="cat_length" id="cat_length">
+								</div>
+								<div class="mt-3">
+									<p><label for="contact_notes">Notes</label></p>
+									<textarea id="contact_notes" name="contact_notes" type="text" class="form-control bg-transparent border-primary"><%= contact ? contact.notes : '' %></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-5">
+						<div class="card rounded-lg">
+							<div class="card-header">
+								<h3>Your Bio</h3>
+							</div>
+							<div class="card-body">
+								<textarea id="bio" name="bio" type="text" rows="5" class="form-control bg-transparent border-primary"><%= user.bio ? user.bio : '' %></textarea> 
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-xl-6 col-lg-8 mx-auto">
+						<div id="friend_carousel" class="carousel slide" data-ride="carousel">
+							<div class="carousel-inner">
+								
+							</div>
+							<a class="carousel-control-prev" href="#friend_carousel" role="button" data-slide="prev">
+								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								<span class="sr-only">Previous</span>
+							</a>
+							<a class="carousel-control-next" href="#friend_carousel" role="button" data-slide="next">
+								<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								<span class="sr-only">Next</span>
+							</a>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-8 mx-auto">
+						<div class="card rounded-lg">
+							<div class="card-header">
+								<h3 class="card-title">Add Friends!</h3>
+								<div id="add_errors"></div>
+							</div>
+							<div class="card-body">
+								<div class="row no-gutters">
+									<div class="col-9">
+										<input type="text" id="friend_search" class="form-control bg-transparent border-primary" placeholder="Username">
+									</div>
+									<div class="col-3">
+										<div class="ml-3"><button type="button" class="btn btn-success" id="friend_search_btn"><i class="fas fa-search"></i></button></div>
+									</div>
+								</div>
+								<small class="text-danger p_link">Advanced Search</small>
+								<div id="search_results_1">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-5">
+					<div class="text-center mx-auto"><button type="submit" class="btn btn-success">Update Profile</button></div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="col-3 hidden" id="friends_template">
+	<div class="card h-100">
+		<div class="friend_pic_div overflow-hidden rounded-circle mx-auto">
+			<img class="img-fluid" style="min-width:100%;min-height:100%" src="/images/blank_profile.png">
+		</div>
+		<div class="card-body overflow-hidden">
+			<h3 class="card-title text-center"></h3>
+			<div class="card-subtitle text-center"></div>
+		</div>
+		<input type="hidden" id="friend_id">
+		<div class="card-footer">
+			<div class="text-center"><button type="button" class="btn btn-danger">Remove</button></div>
+		</div>
+	</div>
+</div>
