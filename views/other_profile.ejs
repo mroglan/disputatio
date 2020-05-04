@@ -18,10 +18,11 @@
 									<%= isFriend ? 'Unfriend' : 'Friend' %>
 								</button>
 							</h1>
-							<h4 class="card-subtitle" id="contact-btn-holder">
+							<h4 class="card-subtitle mt-3"><span class="text-light">&lt;</span><%= profile.tag %><span class="text-light">&gt;</span></h4>
+							<h4 class="card-subtitle mt-3" id="contact-btn-holder">
 								Status: <%= profile.status ? profile.status : 'None' %>
 								<% if(contact) { %>
-									<% if(!contact.reserved || isFriend) { %>
+									<% if(contact.reserved == 'false' || hasFriended) { %>
 										<button type="button" class="btn btn-secondary contact-btn" data-toggle="modal" data-target="#contactModal">View Contact</button>
 										<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModal" aria-hidden="true">
 											<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -33,7 +34,45 @@
 														</button>
 													</div>
 													<div class="modal-body">
-														Hello
+														<div class="container-fluid">
+															<div class="row">
+																<h2 class="d-inline-block"><%= contact.last_name %>, <%= contact.first_name %></h2>
+															</div>
+															<div class="row">
+																<h4 class="d-inline-block"><%= contact.email %></h4>
+															</div>
+															<div class="row">
+																<h4 class="d-inline-block"><%= contact.job %></h4>
+															</div>
+															<div class="row mt-3">
+																<div class="col-12"><h6>Address:</h6></div>
+																<div class="col-12"><h6 class="font-weight-normal"><%= contact.address %></h6></div>
+															</div>
+															<div class="row mt-3">
+																<div class="col-12"><h6>Phones:</h6></div>
+																<dl class="row w-100">
+																	<% contact.phones.forEach(function(phone) { %>
+																		<dt class="col-sm-4"><%= phone.name %></dt>
+																		<dd class="col-sm-8"><%= phone.number %></dd>
+																	<% }); %>
+																</dl>
+															</div>
+															<% if(contact.other.length > 0) { %>
+																<div class="row mt-3">
+																	<div class="col-12"><h6>Other Info:</h6></div>
+																	<dl class="row w-100">
+																		<% contact.other.forEach(function(thing) { %>
+																			<dt class="col-sm-4"><%= thing.name %></dt>
+																			<dd class="col-sm-8"><%= thing.details %></dt>
+																		<% }); %>
+																	</dl>
+																</div>
+															<% } %>
+															<div class="row mt-3">
+																<div class="col-12"><h6>Notes:</h6></div>
+																<h6 class="font-weight-normal"><%= contact.notes %></h6>
+															</div>
+														</div>
 													</div>
 													<div class="modal-footer">
 														<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -45,10 +84,11 @@
 								<% } %>
 							</h4>
 							<hr class="bg-primary">
-							<h6><%= user.bio %></h6>
+							<h6><%= profile.bio %></h6>
 						</div>
-						<div class="card-footer">
-							<a href="friends" class="text-dark"><p id="friended_num" class="font-weight-bold"></p></a>
+						<div class="card-footer row">
+							<div class="col-3"><a href="friends" class="text-dark"><p id="friended_num" class="font-weight-bold"><%= profile.friends.length %> friended</p></a></div>
+							<div class="col-3"><a href="followers" class="text-dark"><p id="friends_num" class="font-weight-bold"><%= profile.followers.length %> followers</p></a></div>
 						</div>
 					</div>
 				</div>

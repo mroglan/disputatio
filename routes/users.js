@@ -42,6 +42,10 @@ router.get('/profile', ensureAuthenticated, UserController.profile_get);
 
 router.post('/profile', UserController.profile_post);
 
+router.get('/profile/followers', ensureAuthenticated, UserController.followers_get);
+
+router.get('/profile/friends', ensureAuthenticated, UserController.friends_get);
+
 router.post('/profile/picture', upload.single('image'), UserController.change_picture);
 
 router.post('/profile/friends/search', UserController.friend_search_1);
@@ -49,6 +53,10 @@ router.post('/profile/friends/search', UserController.friend_search_1);
 router.get('/profile/give_friends', ensureAuthenticated, UserController.give_friends);
 
 router.get('/:id/profile', ensureAuthenticated, UserController.other_profile_get);
+
+router.get('/:id/followers', ensureAuthenticated, UserController.other_followers_get);
+
+router.get('/:id/friends', ensureAuthenticated, UserController.other_friends_get);
 
 router.post('/:id/add_friend', ensureAuthenticated, UserController.add_friend);
 

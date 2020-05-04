@@ -1,0 +1,46 @@
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<div class="container" style="background:rgba(191,172,172,.5);min-height:100vh">
+			<div class="row">
+				<div class="col-12 bg-primary pt-5">
+					<div class="text-center col-12"><h1 class="display-3 text-light">&lt;<%= profile.tag %>&gt;'s Followers</h1></div>
+				</div>
+			</div>
+			<div class="row mt-3">
+				<% if(followers.length == 0) { %>
+					<p><%= profile.name %> has no followers currently :( %></p>
+				<% } else { %>
+					<% followers.forEach(function(follower) { %>
+						<div class="col-xl-3 col-lg-4 col-sm-6">
+							<div class="card">
+								<div class="friend_pic_div overflow-hidden rounded-circle mx-auto" style="width:50%">
+									<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= follower.picture || '/images/blank_profile.png' %>">
+								</div>
+								<div class="card-body">
+									<h3 class="card-title text-center overflow-hidden" style="cursor:pointer"><a href="/users/<%= follower._id %>/profile" style="color:inherit"><%= follower.name %></a></h3>
+									<div class="card-subtitle text-center">&lt;<%= follower.tag %>&gt;</div>
+								</div>
+								<input type="hidden" id="friend_id" value="<%= follower._id %>">
+								<div class="card-footer">
+									<% var alreadyFriended = false; %>
+									<% user.friends.forEach(function(uFriend) { 
+										if(uFriend.toString() == follower._id.toString()) {
+											alreadyFriended = true;
+										}
+									}); %>
+									<% if(alreadyFriended) { %>
+										<div class="text-center"><button type="button" class="btn btn-success" value="unfriend">Friended</button></div>
+									<% } else { %>
+										<div class="text-center"><button type="button" class="btn btn-primary" value="friend">Add friend</button></div>
+									<% } %>
+								</div>
+							</div>
+						</div>
+					<% }); %>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</div>

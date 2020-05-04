@@ -1,0 +1,41 @@
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<div class="container d-flex flex-column" style="background:rgba(191,172,172,.5);height:100vh">
+			<div class="row" style="flex:0 1 auto">
+				<div class="col-12 bg-primary pt-5">
+					<h1 class="display-3 text-center text-light">Conversations</h1>
+				</div>
+			</div>
+			<div class="row align-items-stretch" style="flex:1 1 auto;">
+				<div class="col-xl-3 col-sm-7 mx-auto position-relative">
+					<div class="h-100 position-absolute overflow-auto">
+						<div class="d-flex justify-content-around">
+							<div><button type="button" class="btn" id="create-convo-btn"><span class="text-success" style="vertical-align:top"><i class="fas fa-plus-square"></i> New</span></button></div>
+							<div><button type="button" class="btn" id="delete-convo-btn"><span class="text-danger" style="vertical-align:top"><i class="fas fa-minus-square"></i> Delete</span></button></div>
+						</div>
+						<div class="list-group mt-3">
+							<% convos.sort((a, b) => { let dateA = a.recent_msg; let dateB = b.recent_msg; return (dateA < dateB) ? 1 : (dateA > dateB) ? -1 : 0;}); %>
+							<% convos.forEach(function(convo) { %>
+								<button type="button" class="list-group-item list-group-item-action" value="<%= convo._id %>"><%= convo.name %></button>
+							<% }); if(convos.length == 0) { %>
+								<p class="text-center">You do not have any conversations currently</p>
+							<% } %>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-6 col-sm-11 mx-auto position-relative">
+					<div class="h-100 position-absolute">
+						Convo itself;
+					</div>
+				</div>
+				<div class="col-xl-3 col-sm-7 mx-auto position-relative">
+					<div class="h-100 position-absolute overflow-auto">
+						Convo info; delete/add members;
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

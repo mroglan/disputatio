@@ -43,10 +43,6 @@
 	width: 50%;
 }
 
-#friend_carousel {
-	height: 200px;
-}
-
 .carousel-control-next-icon,
 .carousel-control-prev-icon {
   filter: invert(1);

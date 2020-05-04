@@ -79,16 +79,18 @@ $(() => {
 	
 	$('body').delegate('.search_media h3 span', 'click', function() {
 		var id = $(this).parent().parent().parent().find('input').val();
-		$(location).attr('href', `/users/${id}/profile`);
+		console.log(`/users/${id}/profile`);
+		window.location = `/users/${id}/profile`;
 	}).delegate('.search_media .search_media_btn', 'click', function() {
 		var id = $(this).parent().parent().parent().find('input').val();
 		$.ajax({
 			url: `/users/${id}/add_friend`,
 			type: 'POST', 
 			success: function(data) {
-				console.log('success');
+				console.log(data);
 				if(Array.isArray(data)) {
 					$('.carousel-inner').html('');
+					$('.friended-count').text(data.length.toString() + ' friended');
 					friendCarousel(data, 2);
 				} else {
 					displayAddError(data);
@@ -97,7 +99,7 @@ $(() => {
 		});
 	}).delegate('.carousel-inner h3', 'click', function() {
 		var id = $(this).closest('.card').find('input').val();
-		$(location).attr('href', `/users/${id}/profile`);
+		window.location = `/users/${id}/profile`;
 	}).delegate('.carousel-inner .card-footer button', 'click', function() {
 		var id = $(this).closest('.card').find('input').val();
 		$.ajax({
@@ -107,6 +109,7 @@ $(() => {
 				console.log(data);
 				if(Array.isArray(data)) {
 					$('.carousel-inner').html('');
+					$('.friended-count').text(data.length.toString() + ' friended');
 					friendCarousel(data, 0);
 				} else {
 					console.log(data);
@@ -212,8 +215,8 @@ function setFriends() {
 
 function friendCarousel(friends, num) {
 	var friendArray = [];
-	while(friends.length > 4) {
-		friendArray.push(friends.splice(0, 4));
+	while(friends.length > 2) {
+		friendArray.push(friends.splice(0, 2));
 	}
 	friendArray.push(friends.splice(0));
 	if(num == 2) num = friendArray.length - 1;
@@ -229,9 +232,9 @@ function friendSlide(group, i, num) {
 		//console.log(friend);
 		$('.carousel-inner').children().last().find('.row').append($('#friends_template').clone());
 		$('.carousel-inner').children().last().find('.row').children().last().removeAttr('id').removeClass('hidden').find('img').attr('src', friend.picture || '/images/blank_profile.png')
-		.closest('.card').find('.card-title').text(friend.name).closest('.card').find('.card-subtitle').text(`${friend.status || 'None'}`).closest('.card').find('input').val(friend._id);
+		.closest('.card').find('.card-title').text(friend.name).closest('.card').find('.card-subtitle').text(`<${friend.tag}>`).closest('.card').find('input').val(friend._id);
 	});
-	$('.friend_pic_div').height($('.friend_pic_div').width());
+	//$('.friend_pic_div').height($('.friend_pic_div').width());
 }
 
 function displayAddError(error) {

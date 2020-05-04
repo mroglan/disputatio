@@ -14,6 +14,10 @@ const UserSchema = new Schema({
 		type: String, 
 		required: true
 	}, 
+	tag: {
+		type: String,
+		required: true
+	},
 	admin: {
 		type: Boolean,
 		required: true
@@ -26,8 +30,10 @@ const UserSchema = new Schema({
 		type: String
 	},
 	friends: [{type: Schema.Types.ObjectId}],
+	followers: [{type: Schema.Types.ObjectId}],
 	status: {type: String},
 	bio: {type: String},
+	new_message_count: {type: Number, default: 0}
 });
 
 const User = mongoose.model('User', UserSchema);

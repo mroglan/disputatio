@@ -47,31 +47,55 @@
 								</h2>
 								<hr style="border-color:white">
 							</div>
-							<%- include('./partials/messages') %>
+							<% if(typeof errors != 'undefined') { %>
+								<% errors.forEach(function(error) { %>
+									<div class="alert alert-warning alert-dismissible fade show" role="alert">
+										<%= error.msg %>
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								<% }); %>
+							<% } %>
 							<form method="POST" action="/users/register">
 								<div class="form-group row">
 									<div class="col-sm-2 text-right"><h3 class="text-black"><i class="fa fa-user"></i></h3></div>
 									<div class="col-sm-10">
-										<input type="text" class="form-control" name="name" placeholder="Name" required>
+										<input type="text" class="form-control" name="name" placeholder="Name" required value="<%= typeof name != 'undefined' ? name : '' %>">
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-sm-2 text-right"><h3 class="text-black"><i class="fa fa-envelope"></i></h3></div>
 									<div class="col-sm-10">
-										<input type="email" class="form-control" name="email" placeholder="Email" required>
+										<input type="email" class="form-control" name="email" placeholder="Email" required value="<%= typeof email != 'undefined' ? email : '' %>">
+									</div>
+								</div>
+								<div class="form-group row">
+									<div class="col-sm-2 text-right"><h3 class="text-black"><i class="fas fa-user-tag"></i></h3></div>
+									<div class="col-sm-10">
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text">&lt;</span>
+											</div>
+											<input type="text" class="form-control" name="tag" placeholder="Unique tag" required value="<%= typeof tag != 'undefined' ? tag : '' %>">
+											<div class="input-group-append">
+												<span class="input-group-text">&gt;</span>
+											</div>
+										</div>
+										<small>Must be alphanumeric</small>
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-sm-2 text-right"><h3 class="text-black"><i class="fa fa-lock"></i></h3></div>
 									<div class="col-sm-10">
-										<input type="password" class="form-control" name="password" placeholder="Password" required>
+										<input type="password" class="form-control" name="password" placeholder="Password" required value="<%= typeof password != 'undefined' ? password : '' %>">
 										<small>Must contain at least 6 characters</small>
 									</div>
 								</div>
 								<div class="form-group row no-gutters">
 									<div class="col-sm-2 text-center"><h3 class="text-black"><i class="fa fa-lock pr-1"></i><i class="fa fa-lock"></i></h3></div>
 									<div class="col-sm-10">
-										<input type="password" class="form-control" name="password2" placeholder="Confirm password" required>
+										<input type="password" class="form-control" name="password2" placeholder="Confirm password" required value="<%= typeof password2 != 'undefined' ? password2 : '' %>">
 									</div>
 								</div>
 								<div class="text-center"><button type="submit" class="btn btn-danger">Register</button></div>

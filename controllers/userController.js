@@ -29,75 +29,70 @@ exports.login_post = function(req, res, next) {
 	})(req, res, next);
 };
 
-exports.register_post = function(req, res, next) {
+exports.register_post = [
 	
-	const {name, email, password, password2} = req.body;
-	let errors = [];
+	check('name', 'Name must be specified').trim().isLength({min: 1}),
+	check('email', 'Email must be specified').trim().isLength({min: 1}),
+	check('password', 'Password must be specified').trim().isLength({min: 1}),
+	check('password2', 'Password must be confirmed').trim().isLength({min: 1}),
+	check('tag').trim().isLength({min: 1}).withMessage('A tag must be specified').isAlphanumeric().withMessage('Tag must be alphanumeric'),
 	
-	// Check required fields
-	if(!name || !email || !password || !password2) {
-		errors.push({msg: 'Please fill in all fields'});
+	(req, res, next) => {
+		
+		const {name, email, password, password2, tag} = req.body;
+		const errors = validationResult(req).array();
+		
+		if(password != password2) {
+			errors.push({msg: 'Passwords do not match'});
+		}
+		if(password.length < 6) {
+			errors.push({msg: 'Password should be at least 6 characters'});
+		}
+		
+		if(errors.length > 0) {
+			res.render('welcome', {errors, name, email, tag, password, password2, a1: 'welcome'});
+		} else {
+			User.findOne({email: email}).then(user => {
+				if(user) {
+					// User exists
+					errors.push({msg: 'Email is already registered'});
+					res.render('welcome', {errors, name, email, tag, password, password2, a1: 'welcome'});
+				} else {
+					User.findOne({tag: tag}).then(user2 => {
+						if(user2) {
+							errors.push({msg: 'Tag is already in use!'});
+							res.render('welcome', {errors, name, email, tag, password, password2, a1: 'welcome'});
+						} else {
+							const newUser = new User({name, email, password, tag, admin: false, friends: [], followers: []});
+							// same as newUser = new User({name: name, email: email, password: password});
+							
+							// Hash password
+							bcrypt.genSalt(10, (err, salt) => bcrypt.hash(newUser.password, salt, (err, hash) => {
+								if(err) throw err;
+								// Set password to hashed
+								newUser.password = hash;
+								//Save user 
+								newUser.save().then(user => {
+									req.flash('success_msg', 'You are now registered and can log in');
+									res.redirect('/users/login');
+								}).catch(err => console.log(err));
+							}));
+						}
+					});
+				}
+			});
+		}
 	}
-	
-	// Check passwords match
-	if(password != password2) {
-		errors.push({msg: 'Passwords do not match'});
-	}
-	
-	//Check pass length
-	if(password.length < 6) {
-		errors.push({msg: 'Password should be at least 6 characters'});
-	}
-	
-	if(errors.length > 0) {
-		res.render('register', {
-			errors,
-			name,
-			email, 
-			password, 
-			password2
-		});
-	} else {
-		// Validation passed
-		User.findOne({email: email}).then(user => {
-			if(user) {
-				// User exists
-				errors.push({msg: 'Email is already registered'});
-				res.render('register', {
-					errors,
-					name,
-					email, 
-					password, 
-					password2
-				});
-			} else {
-				const newUser = new User({name, email, password, admin: false, friends: []});
-				// same as newUser = new User({name: name, email: email, password: password});
-				
-				// Hash password
-				bcrypt.genSalt(10, (err, salt) => bcrypt.hash(newUser.password, salt, (err, hash) => {
-					if(err) throw err;
-					// Set password to hashed
-					newUser.password = hash;
-					//Save user 
-					newUser.save().then(user => {
-						req.flash('success_msg', 'You are now registered and can log in');
-						res.redirect('/users/login');
-					}).catch(err => console.log(err));
-				}));
-			}
-		});
-	}
-};	
+];
 
 exports.profile_get = function(req, res, next) {
 	async.parallel({
-		user: callback => User.findById(req.user._id).populate('friends').exec(callback),
+		user: callback => User.findById(req.user._id).populate('friends').populate('followers').exec(callback),
 		contact: callback => Contact.findOne({contact_user: req.user._id}).exec(callback)
 	}, (err, results) => {
 		if(err) return next(err);
 		//console.log(results.user.picture);
-		res.render('profile', {user: req.user, friends: results.user.friends, contact: results.contact, a1: 'profile'});
+		res.render('profile', {user: req.user, friends: results.user.friends, followers: results.user.followers, contact: results.contact, a1: 'profile'});
 	});
 };
 
@@ -113,6 +108,7 @@ exports.profile_post = [
 			var user = {
 				name: req.body.name,
 				email: req.user.email,
+				tag: req.user.tag,
 				status: req.body.status,
 				bio: req.body.bio,
 				admin: req.user.admin,
@@ -120,7 +116,8 @@ exports.profile_post = [
 				picture: req.user.picture,
 				pictureType: req.user.pictureType,
 				_id: req.user._id,
-				friends: req.user.friends
+				friends: req.user.friends,
+				followers: req.user.followers
 			};
 			var contact = {
 				first_name: req.body.contact_first_name,
@@ -151,6 +148,7 @@ exports.profile_post = [
 		var user = {
 			name: req.body.name,
 			email: req.user.email,
+			tag: req.user.tag,
 			status: req.body.status,
 			bio: req.body.bio,
 			admin: req.user.admin,
@@ -158,7 +156,8 @@ exports.profile_post = [
 			picture: req.user.picture,
 			pictureType: req.user.pictureType,
 			_id: req.user._id,
-			friends: req.user.friends
+			friends: req.user.friends,
+			followers: req.user.followers
 		};
 		if(req.body.contact_first_name.length < 1) {
 			var contact = {
@@ -283,16 +282,33 @@ exports.other_profile_get = function(req, res, next) {
 			}
 			i++;
 			if(i == req.user.friends.length) {
+				//console.log('to next function');
 				other_profile_get2(req, res, user, isFriend);
 			}
 		});
+		if(req.user.friends.length == 0) {
+			other_profile_get2(req, res, user, isFriend);
+		}
 	});
 };
 
 function other_profile_get2(req, res, user, isFriend) {
 	Contact.findOne({contact_user: user._id}).exec((err, contact) => {
 		if(err) return next(err);
-		res.render('other_profile', {user: req.user, profile: user, isFriend: isFriend, contact: contact, a1: 'other_profile'});
+		var hasFriended = false, j = 0;
+		req.user.followers.forEach(function(friend, index) {
+			if(friend._id.toString() == req.user._id.toString()) {
+				hasFriended = true;
+			}
+			j++;
+			if(j == req.user.followers.length) {
+				console.log('to final function');
+				res.render('other_profile', {user: req.user, profile: user, isFriend: isFriend, hasFriended: hasFriended, contact: contact, a1: 'other_profile'});
+			}
+		});
+		if(req.user.followers.length == 0) {
+			res.render('other_profile', {user: req.user, profile: user, isFriend: isFriend, hasFriended: hasFriended, contact: contact, a1: 'other_profile'});
+		}
 	});
 };
 
@@ -322,6 +338,11 @@ exports.add_friend = function(req, res, next) {
 		}
 		var friendsArray = req.user.friends;
 		friendsArray.push(result._id);
+		var followerArray = result.followers;
+		followerArray.push(req.user._id);
+		User.findByIdAndUpdate(req.params.id, {followers: followerArray}, (err, otherUser) => {
+			if(err) return next(err);
+		});
 		User.findByIdAndUpdate(req.user._id, {friends: friendsArray}, (err, theuser) => {
 			if(err) return next(err);
 			User.findById(req.user._id).populate('friends').exec((err, user) => {
@@ -357,6 +378,11 @@ exports.remove_friend = function(req, res, next) {
 				else {
 					var friendArray = req.user.friends;
 					friendArray.splice(fIndex, 1);
+					var followerArray = user.followers;
+					followerArray.splice(followerArray.indexOf(req.user._id), 1);
+					User.findByIdAndUpdate(req.params.id, {followers: followerArray}, (err, otherUser) => {
+						if(err) return next(err);
+					});
 					User.findByIdAndUpdate(req.user._id, {friends: friendArray}, (err, theuser) => {
 						if(err) return next(err);
 						User.findById(req.user._id).populate('friends').exec((err, theuser2) => {
@@ -375,5 +401,33 @@ exports.post_friendinfo = function(req, res, next) {
 	User.findById(req.params.id).exec((err, user) => {
 		if(err) return next(err);
 		res.send(user.friends.length.toString());
+	});
+};
+
+exports.friends_get = function(req, res, next) {
+	User.findById(req.user._id).populate('friends').exec((err, user) => {
+		if(err) return next(err);
+		res.render('friend_list', {user: req.user, friends: user.friends, a1: 'friend_list'});
+	});
+};
+
+exports.other_friends_get = function(req, res, next) {
+	User.findById(req.params.id).populate('friends').exec((err, user) => {
+		if(err) return next(err);
+		res.render('other_friend_list', {user: req.user, profile: user, friends: user.friends, a1: 'other_friend_list'});
+	});
+};
+
+exports.followers_get = function(req, res, next) {
+	User.findById(req.user._id).populate('followers').exec((err, user) => {
+		if(err) return next(err);
+		res.render('follower_list', {user: req.user, followers: user.followers, a1: 'follower_list'});
+	});
+};
+
+exports.other_followers_get = function(req, res, next) {
+	User.findById(req.params.id).populate('followers').exec((err, user) => {
+		if(err) return next(err);
+		res.render('other_follower_list', {user: req.user, profile: user, followers: user.followers, a1: 'other_follower_list'});
 	});
 };

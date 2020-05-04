@@ -5,13 +5,13 @@
 
 .friend-button {
 	position: absolute;
-	right: 0;
+	right: -2rem;
 	bottom: 1rem;
 }
 
 .contact-btn {
 	position: absolute;
-	right: 0;
+	right: -2rem;
 	bottom: 0;
 }
 
