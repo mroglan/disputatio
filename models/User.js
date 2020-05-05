@@ -36,6 +36,10 @@ const UserSchema = new Schema({
 	new_message_count: {type: Number, default: 0}
 });
 
+UserSchema.virtual('date_format').get(function() {
+	return moment(this.date).format('MMMM Do, YYYY');
+});
+
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;
