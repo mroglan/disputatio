@@ -30,13 +30,19 @@ exports.conversations_create = [
 		next();
 	},
 	
-	check('name').trim().isLength({min: 1}).withMessage('A name must be specified').isAlphanumeric().withMessage('Name must be alphanumeric'),
+	check('name').trim().isLength({min: 1}).withMessage('A name must be specified'),
 	
 	(req, res, next) => {
 		const errors = validationResult(req).array();
 		
 		if(req.body.convo_user.length == 0) {
 			errors.push({msg: 'You must select at least one recipient'});
+		}
+		
+		const validAlpha = (input) => input.split(' ').every(function(word) { return check(word).isAlphanumeric() });
+		
+		if(!validAlpha(req.body.name)) {
+			errors.push({msg: 'Name must be alphanumeric'});
 		}
 		
 		if(errors.length > 0) {
@@ -58,6 +64,7 @@ exports.conversations_create = [
 				users: userArray,
 				messages: [],
 				new_messages: [],
+				recent_msg: Date.now()
 			});
 			convo.save((err) => {
 				if(err) return next(err);
@@ -66,6 +73,34 @@ exports.conversations_create = [
 		}
 	}
 ];
+
+exports.conversations_delete = function(req, res, next) {
+	if(!(req.body.delete_convo instanceof Array)) {
+		if(typeof req.body.delete_convo === 'undefined') req.body.delete_convo = [];
+		else req.body.delete_convo = Array(req.body.delete_convo);
+	}
+	
+	Convo.find({users: req.user._id}).exec((err, convos) => {
+		convos = convos.filter((el) => req.body.delete_convo.includes(el._id.toString()));
+		convos.forEach(function(convo) {
+			var i = convo.users.indexOf(req.user._id);
+			convo.users.splice(i, 1);
+			if(convo.new_messages[i]) {
+				convo.new_messages.splice(i, 1);
+			}
+			if(convo.start_user.toString() == req.user._id.toString()) {
+				Convo.findByIdAndRemove(convo._id, function deleteConvo(err) {
+					if(err) return next(err);
+				});
+			} else {
+				Convo.findByIdAndUpdate(convo._id, {users: convo.users, new_messages: convo.new_messages}, (err, something) => {
+					if(err) return next(err);
+				});
+			}
+		});
+		res.redirect('/chats/conversations');
+	});
+};
 
 exports.convo_get = function(req, res, next) {
 	async.parallel({
@@ -83,10 +118,16 @@ exports.convo_get = function(req, res, next) {
 		});
 		if(allowed) {
 			var newMessageArr = result.selected.new_messages;
+			if(newMessageArr[num]) {
+				var total = result.user.new_message_count - newMessageArr[num].messages.length;
+				User.findByIdAndUpdate(req.user._id, {new_message_count: total}, (err, someuser) => {
+					if(err) return next(err);
+				});
+			}
 			newMessageArr[num] = {messages: []};
 			Convo.findByIdAndUpdate(req.params.id, {new_messages: newMessageArr}, (err, result2) => {
 				if(err) return next(err);
-				res.render('convo_list', {user: req.user, convos: result.convos, selected: result.selected, a1: 'convo_list'});
+				res.render('convo_list', {user: result.user, convos: result.convos, selected: result.selected, a1: 'convo_list'});
 			});
 		} else {
 			res.redirect('/conversations');

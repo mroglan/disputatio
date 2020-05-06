@@ -13,13 +13,15 @@
 					<div class="h-100 w-100 position-absolute overflow-auto">
 						<div class="d-flex justify-content-around">
 							<div><button type="button" class="btn" id="create-convo-btn"><span class="text-success" style="vertical-align:top"><i class="fas fa-plus-square"></i> New</span></button></div>
-							<div><button type="button" class="btn" id="delete-convo-btn"><span class="text-danger" style="vertical-align:top"><i class="fas fa-minus-square"></i> Delete</span></button></div>
+							<div><button type="button" class="btn" id="delete-convo-btn" data-toggle="modal" data-target="#deleteModal">
+								<span class="text-danger" style="vertical-align:top"><i class="fas fa-minus-square"></i> Leave</span>
+							</button></div>
 						</div>
-						<div class="list-group mt-3">
-							<% convos.sort((a, b) => { let dateA = a.recent_msg; let dateB = b.recent_msg; return (dateA < dateB) ? 1 : (dateA > dateB) ? -1 : 0;}); %>
+						<div class="list-group mt-3" id="convo-list">
+							<% convos.sort((a, b) => b.recent_msg - a.recent_msg); %>
 							<% convos.forEach(function(convo) { %>
 								<a href="/chats/conversations/<%= convo._id %>" class="list-group-item list-group-item-action pb-0 border-primary <%= typeof selected != 'undefined' && selected._id.toString() == convo._id.toString() ? 'active' : '' %>">
-									<h4 class="mb-0"><%= convo.name %></h4>
+									<h4 class="mb-0"><%= convo.name %> <span class="badge badge-info"></span></h4>
 									<p class="mb-0 convo_users_label">
 										<% convo.users.forEach(function(cUser, index) {
 											if(index != 0) { %>
@@ -30,6 +32,7 @@
 												<% } %>
 										<% } }); %>
 									</p>
+									<input type="hidden" id="convo-id" value="<%= convo._id %>">
 								</a>
 							<% }); if(convos.length == 0) { %>
 								<p class="text-center">You do not have any conversations currently</p>
@@ -39,41 +42,53 @@
 				</div>
 				<div class="col-xl-6 col-sm-11 mx-auto position-relative" style="min-height:500px">
 					<div class="h-100 w-100 position-absolute">
-						<div class="card card-body w-100 <%= typeof errors != 'undefined' ? '' : 'd-none' %>" id="create_form">
-							<h1 class="card-title text-center">New Conversation</h1>
-							<% if(typeof errors != 'undefined') { %>
-								<% errors.forEach(function(error) { %>
-									<div class="alert alert-warning alert-dismissible fade show" role="alert">
-										<%= error.msg %>
-										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-									</div>
-								<% }); %>
-							<% } %>
-							<form method="POST" action="/chats/conversations/new">
-								<div class="form-group row">
-									<label for="name" class="col-sm-2 col-form-label">Name</label>
-									<div class="col-sm-10">
-										<input type="text" id="name" name="name" class="form-control" required>
+						<form method="POST" action="/chats/conversations/new">
+							<div class="card w-100 rounded-lg border-dark <%= typeof errors != 'undefined' ? '' : 'd-none' %>" id="create_form">
+								<div class="make-25 card-header" style="height:25%">
+									<h1 class="card-title text-center">New Conversation</h1>
+									<% if(typeof errors != 'undefined') { %>
+										<% errors.forEach(function(error) { %>
+											<div class="alert alert-warning alert-dismissible fade show" role="alert">
+												<%= error.msg %>
+												<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+										<% }); %>
+									<% } %>
+									<div class="form-group row">
+										<label for="name" class="col-sm-2 col-form-label">Name</label>
+										<div class="col-sm-10">
+											<input type="text" id="name" name="name" class="form-control" required>
+										</div>
 									</div>
 								</div>
-								<div class="form-group">
+								<div class="overflow-auto make-55" style="height:55%">
 									<label for="convo_users">Select Users for the Conversation</label>
-									<ul class="list-group list-group-horizontal flex-wrap" id="convo_users">
+									<ul class="list-group list-group-horizontal flex-wrap overflow-auto" id="convo_users">
 									<% user.friends.forEach(function(friend) { %>
-										<li class="list-group-item py-2">
-											<div class="form-check">
-												<input type="checkbox" class="form-check-input" name="convo_user" id="<%= friend._id %>" value="<%= friend._id %>">
-												<label for="<%= friend._id %>" class="form-check-label"><%= friend.name %></label>
+										<button type="button" class="list-group-item list-group-item-action w-50 pb-0 btn border-light create-convo-user" style="border-width:3px">
+											<div class="row">
+												<div class="col-xl-3 col-sm-2">
+													<div class="w-100 overflow-hidden rounded-circle border friend-pic-div">
+														<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= friend.picture || '/images/blank_profile.png' %>">
+													</div>
+												</div>
+												<div class="col-xl-9 col-sm-10">
+													<h6><%= friend.name %></h6>
+													<small>&lt;<%= friend.tag %>&gt;</small>
+												</div>
 											</div>
-										</li>
+											<input type="checkbox" class="hidden" name="convo_user" value="<%= friend._id %>">
+										</button>
 									<% }); %>
 									</ul>
 								</div>
-								<button type="submit" class="btn btn-success">Create new Conversation</button>
+								<div class="card-footer">
+									<button type="submit" class="btn btn-success" mb-3>Create new Conversation</button>
+								</div>
+							</div>
 							</form>
-						</div>
 						<% if(typeof selected != 'undefined') { %>
 							<div class="message-box">
 								<div class="chat-title">
@@ -82,12 +97,27 @@
 								<div class="content overflow-auto">
 									<% selected.messages.forEach(function(message) { %>
 										<% if(message.writer.toString() == user._id.toString()) { %>
-											<div class="green message float-right mb-3">
-												<div><%= message.message %></div>
+											<div class="message float-right mb-2">
+												<div class="green px-2 py-1">
+													<div><%= message.message %></div>
+												</div>
 											</div>
 										<% } else { %>
-											<div class="gray message float-left mb-3">
-												<div><%= message.message %></div>
+											<% 
+											var chosenOne;
+											selected.users.forEach(function(sUser) {
+												if(sUser._id.toString() == message.writer.toString()) {
+													chosenOne = sUser.tag;
+												}
+											});
+											%>
+											<div class="float-left message mb-2">
+												<small>
+													<a href="/users/<%= message.writer %>/profile" class="text-info">&lt;<%= chosenOne %>&gt;</a>
+												</small>
+												<div class="gray px-2 py-1">
+													<div><%= message.message %></div>
+												</div>
 											</div>
 										<% } %>
 									<% }); %>
@@ -122,9 +152,9 @@
 										<% }); %>
 									</div>
 								</div>
-								<div class="card-footer">
+								<div class="card-footer mb-3">
 									<div class="d-flex justify-content-around">
-										<button type="button" class="btn btn-success mx-3" id="add_members">Add Members</button>
+										<button type="button" class="btn btn-success mx-3" id="add_members" data-toggle="modal" data-target="#addMembersModal">Add Members</button>
 										<% if(user._id.toString() == selected.start_user._id.toString()) { %>
 											<button type="button" class="btn btn-danger mx-3" id="remove_members">Remove Members</button>
 										<% } %>
@@ -137,4 +167,100 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<% if(typeof selected != 'undefined') { %>
+	<div class="modal fade" id="addMembersModal" tabindex="-1" role="dialog" aria-labelledby="addMembersModal" aria-hidden="true">
+		<form method="POST" action="/chats/conversations/<%= selected._id %>/add_members">
+			<div class="modal-dialog modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Select Friends to Add!</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<ul class="list-group list-group-horizontal flex-wrap">
+							<% user.friends.forEach(function(friend) { %>
+								<li class="list-group-item py-2" title="&lt;<%= friend.tag %>&gt;">
+									<div class="form-check">
+										<% var already = false;
+											selected.users.forEach(function(sUser) {
+												if(sUser._id.toString() == friend._id.toString()) {
+													already = true;
+												}
+											});
+										%>
+										<input type="checkbox" class="form-check-input" name="convo_user" id="<%= friend._id %>" value="<%= friend._id %>" <%= already ? 'disabled' : '' %>>
+										<label for="<%= friend._id %>" class="form-check-label"><%= friend.name %></label>
+									</div>
+								</li>
+							<% }); %>
+						</ul>
+					</div>
+					<div class="modal-footer d-flex justify-content-around">
+						<button type="submit" class="btn btn-success">Add</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+<% } %>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
+	<form method="POST" action="/chats/conversations/delete">
+		<div class="modal-dialog modal-dialog-scrollable" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<div class="row">
+						<div class="col-10">
+							<h5 class="modal-title">Select Conversations to Leave</h5>
+							<h6 class="modal-subtitle text-danger">Note: if you created the conversation, the conversation itself will be deleted</h6>
+						</div>
+						<div class="col">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-10 mx-auto">
+							<ul class="list-group">
+								<% convos.forEach(function(convo) { %>
+									<button type="button" class="list-group-item list-group-item-action pb-0 btn border-primary delete-convo-select">
+										<div class="row no-gutters">
+											<div class="col-2">
+												<h1><span class="text-dark"><i class="far fa-trash-alt"></i></span></h1>
+											</div>
+											<div class="col-10 pl-3">
+												<h4 class="mb-0"><%= convo.name %> <span class="badge badge-info"></span></h4>
+												<p class="mb-0 convo_users_label">
+													<% convo.users.forEach(function(cUser, index) {
+														if(index != 0) { %>
+															<% if(index == convo.users.length - 1) { %>
+																<%= cUser.name %>
+															<% } else { %>
+																<%= cUser.name %>, 
+															<% } %>
+													<% } }); %>
+												</p>
+											</div>
+										</div>
+										<input type="checkbox" value="<%= convo._id %>" class="hidden delete-convo-input" name="delete_convo">
+									</button>
+								<% }); %>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-around">
+					<button type="submit" class="btn btn-danger">Leave</button>
+					<button type="button" data-dismiss="modal" class="btn btn-secondary">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</form>
 </div>
