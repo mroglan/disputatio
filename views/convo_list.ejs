@@ -23,14 +23,14 @@
 								<a href="/chats/conversations/<%= convo._id %>" class="list-group-item list-group-item-action pb-0 border-primary <%= typeof selected != 'undefined' && selected._id.toString() == convo._id.toString() ? 'active' : '' %>">
 									<h4 class="mb-0"><%= convo.name %> <span class="badge badge-info"></span></h4>
 									<p class="mb-0 convo_users_label">
-										<% convo.users.forEach(function(cUser, index) {
-											if(index != 0) { %>
-												<% if(index == convo.users.length - 1) { %>
-													<%= cUser.name %>
-												<% } else { %>
-													<%= cUser.name %>, 
-												<% } %>
-										<% } }); %>
+										<% let otherUsers = convo.users.filter(cUser => cUser._id.toString() != user._id.toString()); %>
+										<% otherUsers.forEach(function(cUser, index) { %>
+											<% if(index == otherUsers.length - 1) { %>
+												<%= cUser.name %>
+											<% } else { %>
+												<%= cUser.name %>, 
+											<% } %>
+										<% }); %>
 									</p>
 									<input type="hidden" id="convo-id" value="<%= convo._id %>">
 								</a>

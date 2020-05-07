@@ -77,7 +77,8 @@ $(() => {
 	});
 	
 	if($('#current-convo-id').length != 0) {
-		setTimeout(checkForMessages, 5000);
+		//setTimeout(checkForMessages, 5000);
+		setTimeout(checkSideBar, 10000);
 	}
 });
 
@@ -117,6 +118,37 @@ function checkForMessages() {
 		},
 		complete: function(data) {
 			setTimeout(checkForMessages, 5000);
+		}
+	});
+}
+
+function checkSideBar() {
+	let id = $('#current-convo-id').val();
+	$.ajax({
+		url: `/chats/conversations/${id}/sidebar`,
+		type: 'POST',
+		contentType: 'application/json',
+		data: JSON.stringify({'id': $('#user-id').val()}),
+		success: function(data) {
+			$('#convo-list').html('');
+			console.log('here we are');
+			data.forEach(function(convo) {
+				let names = [];
+				convo.users.forEach(function(user) {
+					names.push(user.name);
+				});
+				names = names.join(', ');
+				$('#convo-list').append(`<a href="/chats/conversations/${convo.id}" class="list-group-item list-group-item-action pb-0 border-primary ${convo.id == id ? 'active' : ''}">
+					<h4 class="mb-0">${convo.name} <span class="badge badge-info">${convo.new_len > 0 && convo.id != id ? convo.new_len : ''}</span></h4>
+					<p class="mb-0 convo_users_label">
+						${names}
+					</p>
+					<input type="hidden" id="convo-id" value="${convo.id}">
+				</a>`);
+			});
+		},
+		complete: function(data) {
+			setTimeout(checkSideBar, 10000);
 		}
 	});
 }

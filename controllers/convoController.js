@@ -352,3 +352,24 @@ exports.get_new_messages = function(req, res, next) {
 		}
 	});
 };
+
+exports.check_sidebar = function(req, res, next) {
+	Convo.find({users: req.user._id}).populate('users').exec((err, convos) => {
+		if(err) return next(err);
+		convos.sort((a, b) => b.recent_msg - a.recent_msg);
+		let sendArray = [];
+		convos.forEach(function(convo) {
+			let i;
+			convo.users.forEach(function(user, index) {
+				if(user._id.toString() == req.user._id.toString()) {
+					i = index;
+				}
+			});
+			sendArray.push({name: convo.name, 
+			users: convo.users.filter(user => user._id.toString() != req.user._id.toString()),
+			new_len: convo.new_messages[i] ? convo.new_messages[i].messages.length : 0,
+			id: convo._id});
+		});
+		res.send(sendArray);
+	});
+};
