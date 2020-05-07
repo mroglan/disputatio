@@ -77,7 +77,7 @@ $(() => {
 	});
 	
 	if($('#current-convo-id').length != 0) {
-		//setTimeout(checkForMessages, 5000);
+		setTimeout(checkForMessages, 5000);
 		setTimeout(checkSideBar, 10000);
 	}
 });
