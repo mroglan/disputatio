@@ -2,7 +2,7 @@
 $(() => {
 	
 	$('body').delegate('.card button', 'click', function() {
-		var id = $(this).closest('.card').find('input').val();
+		let id = $(this).closest('.card').find('input').val();
 		$.ajax({
 			url: `/users/${id}/remove_friend`,
 			type: 'POST',
@@ -16,7 +16,7 @@ $(() => {
 		});
 		$(this).closest('.card').parent().remove();
 	}).delegate('.card-body h3', 'click', function() {
-		var id = $(this).closest('.card').find('input').val();
+		let id = $(this).closest('.card').find('input').val();
 		window.location = `/users/${id}/profile`;
 	});
 });

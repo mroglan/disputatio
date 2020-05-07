@@ -69,12 +69,12 @@
 									<% user.friends.forEach(function(friend) { %>
 										<button type="button" class="list-group-item list-group-item-action w-50 pb-0 btn border-light create-convo-user" style="border-width:3px">
 											<div class="row">
-												<div class="col-xl-3 col-sm-2">
+												<div class="col-4">
 													<div class="w-100 overflow-hidden rounded-circle border friend-pic-div">
 														<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= friend.picture || '/images/blank_profile.png' %>">
 													</div>
 												</div>
-												<div class="col-xl-9 col-sm-10">
+												<div class="col-8">
 													<h6><%= friend.name %></h6>
 													<small>&lt;<%= friend.tag %>&gt;</small>
 												</div>
@@ -92,40 +92,46 @@
 						<% if(typeof selected != 'undefined') { %>
 							<div class="message-box">
 								<div class="chat-title">
-									<h1 class="text-center"><%= selected.name %></h1>
+									<h1 class="text-center convo_users_label"><%= selected.name %></h1>
 								</div>
 								<div class="content overflow-auto">
 									<% selected.messages.forEach(function(message) { %>
-										<% if(message.writer.toString() == user._id.toString()) { %>
-											<div class="message float-right mb-2">
-												<div class="green px-2 py-1">
-													<div><%= message.message %></div>
-												</div>
+										<% if(message.special) { %>
+											<div class="w-75 mx-auto text-center text-danger" style="clear:both">
+												<%= message.message %>
 											</div>
 										<% } else { %>
-											<% 
-											var chosenOne;
-											selected.users.forEach(function(sUser) {
-												if(sUser._id.toString() == message.writer.toString()) {
-													chosenOne = sUser.tag;
-												}
-											});
-											%>
-											<div class="float-left message mb-2">
-												<small>
-													<a href="/users/<%= message.writer %>/profile" class="text-info">&lt;<%= chosenOne %>&gt;</a>
-												</small>
-												<div class="gray px-2 py-1">
-													<div><%= message.message %></div>
+											<% if(message.writer.toString() == user._id.toString()) { %>
+												<div class="message float-right mb-2">
+													<div class="green px-2 py-1">
+														<div><%= message.message %></div>
+													</div>
 												</div>
-											</div>
+											<% } else { %>
+												<% 
+												let chosenOne;
+												selected.users.forEach(function(sUser) {
+													if(sUser._id.toString() == message.writer.toString()) {
+														chosenOne = sUser.tag;
+													}
+												});
+												%>
+												<div class="float-left message mb-2">
+													<small>
+														<a href="/users/<%= message.writer %>/profile" class="text-info">&lt;<%= chosenOne %>&gt;</a>
+													</small>
+													<div class="gray px-2 py-1">
+														<div><%= message.message %></div>
+													</div>
+												</div>
+											<% } %>
 										<% } %>
 									<% }); %>
 								</div>
 								<div class="writing">
-									<form method="POST" action="">
+									<form id="form-message" method="POST" action="">
 										<textarea id="message" name="message" required placeholder="Type your message here"></textarea>
-										<button type="submit" class="btn btn-primary">Submit</button>
+										<button type="submit" class="btn btn-primary">Send</button>
 									</form>
 								</div>
 							</div>
@@ -139,16 +145,20 @@
 								<div class="card-header">
 									<p class="card-title text-center">Created on <%= selected.date_format %> by <a href="/users/<%= selected.start_user._id %>/profile"><%= selected.start_user.name %></a></p>
 								</div>
-								<div class="card-body overflow-auto px-xl-1">
-									<div class="d-flex flex-row flex-wrap justify-content-center">
+								<div class="card-body overflow-auto px-xl-1 pt-1">
+									<div class="list-group">
 										<% selected.users.forEach(function(sUser) { %>
-											<div class="p-2 pic-flex-item">
-												<div class="w-100 h-100 overflow-hidden rounded-circle border-primary">
-													<a href="/users/<%= sUser._id %>/profile">
+											<a class="list-group-item list-group-item-action pb-0" href="/users/<%= sUser._id %>/profile">
+												<div class="row">
+													<div class="col-4 px-0 overflow-hidden rounded-circle border-primary user-pic-div">
 														<img title="&lt;<%= sUser.tag %>&gt;" class="img-fluid" style="min-width:100%;min-height:100%" src="<%= sUser.picture || '/images/blank_profile.png' %>">
-													</a>
+													</div>
+													<div class="col-8 pl-3 pt-2">
+														<h4 class="convo_users_label"><%= sUser.name %></h4>
+														<p class="convo_users_label">&lt;<%= sUser.tag %>&gt;</p>
+													</div>
 												</div>
-											</div>
+											</a>
 										<% }); %>
 									</div>
 								</div>
@@ -156,7 +166,7 @@
 									<div class="d-flex justify-content-around">
 										<button type="button" class="btn btn-success mx-3" id="add_members" data-toggle="modal" data-target="#addMembersModal">Add Members</button>
 										<% if(user._id.toString() == selected.start_user._id.toString()) { %>
-											<button type="button" class="btn btn-danger mx-3" id="remove_members">Remove Members</button>
+											<button type="button" class="btn btn-danger mx-3" id="remove_members" data-toggle="modal" data-target="#removeMembersModal">Remove Members</button>
 										<% } %>
 									</div>
 								</div>
@@ -168,8 +178,10 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" id="user-id" value="<%= user._id %>">
 
 <% if(typeof selected != 'undefined') { %>
+	<input type="hidden" id="current-convo-id" value="<%= selected._id %>">
 	<div class="modal fade" id="addMembersModal" tabindex="-1" role="dialog" aria-labelledby="addMembersModal" aria-hidden="true">
 		<form method="POST" action="/chats/conversations/<%= selected._id %>/add_members">
 			<div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -183,24 +195,72 @@
 					<div class="modal-body">
 						<ul class="list-group list-group-horizontal flex-wrap">
 							<% user.friends.forEach(function(friend) { %>
-								<li class="list-group-item py-2" title="&lt;<%= friend.tag %>&gt;">
-									<div class="form-check">
-										<% var already = false;
-											selected.users.forEach(function(sUser) {
-												if(sUser._id.toString() == friend._id.toString()) {
-													already = true;
-												}
-											});
-										%>
-										<input type="checkbox" class="form-check-input" name="convo_user" id="<%= friend._id %>" value="<%= friend._id %>" <%= already ? 'disabled' : '' %>>
-										<label for="<%= friend._id %>" class="form-check-label"><%= friend.name %></label>
-									</div>
-								</li>
+								<% let already = false;
+									selected.users.forEach(function(sUser) {
+										if(sUser._id.toString() == friend._id.toString()) {
+											already = true;
+										}
+									});
+								%>
+								<% if(!already) { %>
+									<button type="button" class="list-group-item list-group-item-action w-50 border-light create-convo-user" style="border-width:3px">
+										<div class="row">
+											<div class="col-4 px-0 overflow-hidden rounded-circle border-primary user-pic-div">
+												<img title="&lt;<%= friend.tag %>&gt;" class="img-fluid" style="min-width:100%;min-height:100%" src="<%= friend.picture || '/images/blank_profile.png' %>">
+											</div>
+											<div class="col-8">
+												<h6><%= friend.name %></h6>
+												<small>&lt;<%= friend.tag %>&gt;</small>
+											</div>
+										</div>
+										<input type="checkbox" class="hidden" name="new_user" value="<%= friend._id %>">
+										<input type="checkbox" class="hidden" name="new_user_tag" value="<%= friend.tag %>">
+									</button>
+								<% } %>
 							<% }); %>
 						</ul>
 					</div>
 					<div class="modal-footer d-flex justify-content-around">
 						<button type="submit" class="btn btn-success">Add</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal fade" id="removeMembersModal" tabindex="-1" role="dialog" aria-labelledby="removeMembersModal" aria-hidden="true">
+		<form method="POST" action="/chats/conversations/<%= selected.id %>/remove_members">
+			<div class="modal-dialog modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Select Members to Remove</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<ul class="list-group list-group-horizontal flex-wrap">
+							<% selected.users.forEach(function(sUser) { %>
+								<% if(sUser._id.toString() != user._id.toString()) { %>
+									<button type="button" class="list-group-item list-group-item-action w-50 border-light delete-convo-user" style="border-width:3px">
+										<div class="row">
+											<div class="col-4 px-0 overflow-hidden rounded-circle border-primary user-pic-div">
+												<img title="&lt;<%= sUser.tag %>&gt;" class="img-fluid" style="min-width:100%;min-height:100%" src="<%= sUser.picture || '/images/blank_profile.png' %>">
+											</div>
+											<div class="col-8">
+												<h6><%= sUser.name %></h6>
+												<small>&lt;<%= sUser.tag %>&gt;</small>
+											</div>
+										</div>
+										<input type="checkbox" class="hidden" name="delete_user" value="<%= sUser._id %>">
+										<input type="checkbox" class="hidden" name="delete_user_tag" value="<%= sUser.tag %>">
+									</button>
+								<% } %>
+							<% }); %>
+						</ul>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-danger">Remove</button>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 					</div>
 				</div>

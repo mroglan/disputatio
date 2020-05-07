@@ -2,8 +2,8 @@ $(() => {
 	
 	$('.card-footer button').click(function() {
 		//console.log($(this).val());
-		var id = $(this).closest('.card').find('input').val();
-		var button = $(this);
+		let id = $(this).closest('.card').find('input').val();
+		let button = $(this);
 		if($(this).val() == 'unfriend') {
 			$.ajax({
 				url: `/users/${id}/remove_friend`,

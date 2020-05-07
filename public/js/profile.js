@@ -24,10 +24,10 @@ $(() => {
 	
 	$('#pic_file').change(function() {
 		
-		var formdata = new FormData();
+		let formdata = new FormData();
 		if($(this).prop('files').length > 0) {
 			console.log('has files');
-			var file = $(this).prop('files')[0];
+			let file = $(this).prop('files')[0];
 			formdata.append('image', file);
 			
 			$.ajax({
@@ -46,7 +46,7 @@ $(() => {
 	});
 	
 	$('#friend_search_btn').click(function() {
-		var data = $('#friend_search').val();
+		let data = $('#friend_search').val();
 		$.ajax({
 			url: '/users/profile/friends/search',
 			type: 'POST',
@@ -55,7 +55,7 @@ $(() => {
 			success: function(data) {
 				$('#search_results_1').html('');
 				data.forEach(function(user) {
-					var picture;
+					let picture;
 					if(user.picture) picture = user.picture;
 					else picture = '/images/blank_profile.png';
 					$('#search_results_1').append(`<div class="media search_media">
@@ -78,11 +78,11 @@ $(() => {
 	});
 	
 	$('body').delegate('.search_media h3 span', 'click', function() {
-		var id = $(this).parent().parent().parent().find('input').val();
+		let id = $(this).parent().parent().parent().find('input').val();
 		console.log(`/users/${id}/profile`);
 		window.location = `/users/${id}/profile`;
 	}).delegate('.search_media .search_media_btn', 'click', function() {
-		var id = $(this).parent().parent().parent().find('input').val();
+		let id = $(this).parent().parent().parent().find('input').val();
 		$.ajax({
 			url: `/users/${id}/add_friend`,
 			type: 'POST', 
@@ -98,10 +98,10 @@ $(() => {
 			}
 		});
 	}).delegate('.carousel-inner h3', 'click', function() {
-		var id = $(this).closest('.card').find('input').val();
+		let id = $(this).closest('.card').find('input').val();
 		window.location = `/users/${id}/profile`;
 	}).delegate('.carousel-inner .card-footer button', 'click', function() {
-		var id = $(this).closest('.card').find('input').val();
+		let id = $(this).closest('.card').find('input').val();
 		$.ajax({
 			url: `/users/${id}/remove_friend`,
 			type: 'POST',
@@ -136,7 +136,7 @@ $(() => {
 	
 	$('#add_phone_btn').click(function() {
 		if(parseInt($('#phone_length').val()) < 4) {
-			var disabledArray = [false, false, false];
+			let disabledArray = [false, false, false];
 			$('#phone_list').children().each(function() {
 				//console.log($(this).find('select').val());
 				if($(this).find('select').val() == 'home') disabledArray[0] = true;
@@ -145,7 +145,7 @@ $(() => {
 			});
 			//console.log(disabledArray);
 			$('#phone_list').append($('#phone_list_item').clone());
-			var num = $('#phone_list').children().length;
+			let num = $('#phone_list').children().length;
 			$('#phone_list').children().last().removeAttr('id').find('input').attr('name', 'phone_number_' + num).val('').closest('.list-group-item').find('select').attr('name', 'phone_name_' + num);
 			$('#phone_list').children().last().find('select').children().last().attr('selected', 'selected').parent().children().each(function(index) {
 				//console.log(index);
@@ -169,7 +169,7 @@ $(() => {
 	$('#add_cat_btn').click(function() {
 		if(parseInt($('#cat_length').val()) < 5) {
 			$('#cat_list').append($('#cat_list_item').clone());
-			var num = $('#cat_list').children().length;
+			let num = $('#cat_list').children().length;
 			$('#cat_list').children().last().removeAttr('id').find('.col-md-4').children('input').attr('name', 'cat_name_' + num).val('').closest('.list-group-item').find('.col-md-8').children('input').attr('name', 'cat_detail_' + num).val('');
 			$('#cat_length').val(parseInt($('#cat_length').val()) + 1);
 			//console.log($('#cat_length').val());
@@ -214,7 +214,7 @@ function setFriends() {
 }
 
 function friendCarousel(friends, num) {
-	var friendArray = [];
+	let friendArray = [];
 	while(friends.length > 2) {
 		friendArray.push(friends.splice(0, 2));
 	}

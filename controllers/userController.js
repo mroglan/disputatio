@@ -105,7 +105,7 @@ exports.profile_post = [
 		const errors = validationResult(req);
 		
 		if(!errors.isEmpty()) {
-			var user = {
+			let user = {
 				name: req.body.name,
 				email: req.user.email,
 				tag: req.user.tag,
@@ -119,7 +119,7 @@ exports.profile_post = [
 				friends: req.user.friends,
 				followers: req.user.followers
 			};
-			var contact = {
+			let contact = {
 				first_name: req.body.contact_first_name,
 				last_name: req.body.contact_last_name,
 				reserved: req.body.reserve_option,
@@ -145,7 +145,7 @@ exports.profile_post = [
 	},
 	
 	(req, res, next) => {
-		var user = {
+		let user = {
 			name: req.body.name,
 			email: req.user.email,
 			tag: req.user.tag,
@@ -160,7 +160,7 @@ exports.profile_post = [
 			followers: req.user.followers
 		};
 		if(req.body.contact_first_name.length < 1) {
-			var contact = {
+			let contact = {
 				first_name: req.body.contact_first_name,
 				last_name: req.body.contact_last_name,
 				reserved: req.body.reserve_option,
@@ -179,7 +179,7 @@ exports.profile_post = [
 			Contact.findOne({contact_user: req.user._id}).exec((err, result) => {
 				if(err) return next(err);
 				console.log(phones(req));
-				var contact = new Contact({
+				let contact = new Contact({
 					first_name: req.body.contact_first_name,
 					last_name: req.body.contact_last_name,
 					reserved: req.body.reserve_option,
@@ -212,7 +212,7 @@ exports.profile_post = [
 ];
 
 function others(req) {
-	var otherArray = [];
+	let otherArray = [];
 	for(let i = 0; i < req.body.cat_length; i++) {
 		if(i == 0) {
 			otherArray.push({name: req.body.cat_name_1, details: req.body.cat_detail_1});
@@ -230,7 +230,7 @@ function others(req) {
 }
 
 function phones(req) {
-	var phoneArray = [];
+	let phoneArray = [];
 	for(let i = 0; i < req.body.phone_length; i++) {
 		if(i == 0) {
 			phoneArray.push({name: req.body.phone_name_1, number: req.body.phone_number_1});
@@ -254,8 +254,8 @@ exports.change_picture = function(req, res, next) {
 };
 
 exports.friend_search_1 = function(req, res, next) {
-	var count = 0;
-	var userArray = [];
+	let count = 0;
+	let userArray = [];
 	User.find().exec((err, users) => {
 		users.forEach(function(user) {
 			//console.log(user.name.toLowerCase() + ', ' + req.body.search.toLowerCase());
@@ -275,7 +275,7 @@ exports.friend_search_1 = function(req, res, next) {
 exports.other_profile_get = function(req, res, next) {
 	User.findById(req.params.id).populate('friends').exec((err, user) => {
 		if(err) return next(err);
-		var isFriend = false, i = 0;
+		let isFriend = false, i = 0;
 		req.user.friends.forEach(function(friend, index) {
 			if(friend.toString() == user._id.toString()) {
 				isFriend = true;
@@ -295,7 +295,7 @@ exports.other_profile_get = function(req, res, next) {
 function other_profile_get2(req, res, user, isFriend) {
 	Contact.findOne({contact_user: user._id}).exec((err, contact) => {
 		if(err) return next(err);
-		var hasFriended = false, j = 0;
+		let hasFriended = false, j = 0;
 		req.user.followers.forEach(function(friend, index) {
 			if(friend._id.toString() == req.user._id.toString()) {
 				hasFriended = true;
@@ -322,7 +322,7 @@ exports.add_friend = function(req, res, next) {
 			});
 			return;
 		}
-		var valid = true;
+		let valid = true;
 		req.user.friends.forEach(function(friend) {
 			if(friend.toString() == result._id.toString()) {
 				//console.log('repeat');
@@ -336,9 +336,9 @@ exports.add_friend = function(req, res, next) {
 			});
 			return;
 		}
-		var friendsArray = req.user.friends;
+		let friendsArray = req.user.friends;
 		friendsArray.push(result._id);
-		var followerArray = result.followers;
+		let followerArray = result.followers;
 		followerArray.push(req.user._id);
 		User.findByIdAndUpdate(req.params.id, {followers: followerArray}, (err, otherUser) => {
 			if(err) return next(err);
@@ -363,7 +363,7 @@ exports.give_friends = function(req, res, next) {
 exports.remove_friend = function(req, res, next) {
 	User.findById(req.params.id).exec((err, user) => {
 		if(err) return next(err);
-		var isFriend = false, fIndex = 0, i = 0;
+		let isFriend = false, fIndex = 0, i = 0;
 		req.user.friends.forEach(function(friend, index) {
 			//console.log(friend.toString() + ', ' + user._id.toString());
 			if(friend.toString() == user._id.toString()) {
@@ -376,9 +376,9 @@ exports.remove_friend = function(req, res, next) {
 					res.send('Already not a friend');
 				}
 				else {
-					var friendArray = req.user.friends;
+					let friendArray = req.user.friends;
 					friendArray.splice(fIndex, 1);
-					var followerArray = user.followers;
+					let followerArray = user.followers;
 					followerArray.splice(followerArray.indexOf(req.user._id), 1);
 					User.findByIdAndUpdate(req.params.id, {followers: followerArray}, (err, otherUser) => {
 						if(err) return next(err);

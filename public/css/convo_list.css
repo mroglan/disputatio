@@ -15,7 +15,7 @@
 }
 
 .writing {
-	height: 35%;
+	height: 25%;
 }
 
 .writing textarea {
@@ -74,6 +74,7 @@ body {
 
 .convo_users_label {
 	text-overflow: ellipsis;
+	overflow: hidden;
 	white-space: nowrap;
 }
 

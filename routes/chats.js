@@ -20,6 +20,10 @@ router.get('/conversations/:id', ensureAuthenticated, ConvoController.convo_get)
 
 router.post('/conversations/:id', ConvoController.convo_post);
 
+router.post('/conversations/:id/add_members', ConvoController.convo_add_members);
 
+router.post('/conversations/:id/remove_members', ConvoController.convo_remove_members);
+
+router.post('/conversations/:id/get_messages', ConvoController.get_new_messages);
 
 module.exports = router;

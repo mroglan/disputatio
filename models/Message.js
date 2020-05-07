@@ -6,8 +6,9 @@ const MessageSchema = new Schema({
 	writer: {type: Schema.Types.ObjectId, ref: 'User'},
 	convo: {type: Schema.Types.ObjectId, ref: 'Convo'},
 	message: {type: String},
-	files: {fileType: {type: String}, location: {type: String}},
-	date: {type: Date, default: Date.now()}
+	files: [{fileType: {type: String}, location: {type: String}}],
+	date: {type: Date, default: Date.now()},
+	special: {type: Boolean, default: false}
 });
 
 MessageSchema.virtual('date_format').get(function() {
