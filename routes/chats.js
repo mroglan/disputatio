@@ -16,6 +16,8 @@ router.post('/conversations/new', ConvoController.conversations_create);
 
 router.post('/conversations/delete', ConvoController.conversations_delete);
 
+router.post('/conversations/sidebar', ensureAuthenticated, ConvoController.check_sidebar);
+
 router.get('/conversations/:id', ensureAuthenticated, ConvoController.convo_get);
 
 router.post('/conversations/:id', ConvoController.convo_post);
@@ -25,7 +27,5 @@ router.post('/conversations/:id/add_members', ConvoController.convo_add_members)
 router.post('/conversations/:id/remove_members', ConvoController.convo_remove_members);
 
 router.post('/conversations/:id/get_messages', ensureAuthenticated, ConvoController.get_new_messages);
-
-router.post('/conversations/:id/sidebar', ensureAuthenticated, ConvoController.check_sidebar);
 
 module.exports = router;

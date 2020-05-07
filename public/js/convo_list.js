@@ -76,9 +76,10 @@ $(() => {
 		});
 	});
 	
+	setTimeout(checkSideBar, 10000);
+	
 	if($('#current-convo-id').length != 0) {
 		setTimeout(checkForMessages, 5000);
-		setTimeout(checkSideBar, 10000);
 	}
 });
 
@@ -123,9 +124,9 @@ function checkForMessages() {
 }
 
 function checkSideBar() {
-	let id = $('#current-convo-id').val();
+	let id = $('#current-convo-id').val() || '';
 	$.ajax({
-		url: `/chats/conversations/${id}/sidebar`,
+		url: `/chats/conversations/sidebar`,
 		type: 'POST',
 		contentType: 'application/json',
 		data: JSON.stringify({'id': $('#user-id').val()}),
