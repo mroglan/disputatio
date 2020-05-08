@@ -5,10 +5,16 @@ const {ensureAuthenticated, ensureNotAuthenticated, ensureAdmin} = require('../c
 //Controllers
 const ConvoController = require('../controllers/convoController');
 const NotificationController = require('../controllers/notificationController');
+const GroupController = require('../controllers/groupController');
 
-router.post('/side_notifications/convos', NotificationController.side_convos);
+
+//Notifications
+router.post('/side_notifications/convos', ensureAuthenticated, NotificationController.side_convos);
 
 router.post('/conversations/notifications', NotificationController.convo_list);
+
+
+//Conversations
 
 router.get('/conversations', ensureAuthenticated, ConvoController.conversations_get);
 
@@ -27,5 +33,9 @@ router.post('/conversations/:id/add_members', ConvoController.convo_add_members)
 router.post('/conversations/:id/remove_members', ConvoController.convo_remove_members);
 
 router.post('/conversations/:id/get_messages', ensureAuthenticated, ConvoController.get_new_messages);
+
+
+//Groups
+router.get('/groups', ensureAuthenticated, GroupController.groups_get);
 
 module.exports = router;

@@ -53,23 +53,25 @@ $(() => {
 			contentType: 'application/json',
 			data: JSON.stringify({'search': data}),
 			success: function(data) {
+				console.log(data);
 				$('#search_results_1').html('');
-				data.forEach(function(user) {
-					let picture;
-					if(user.picture) picture = user.picture;
-					else picture = '/images/blank_profile.png';
-					$('#search_results_1').append(`<div class="media search_media">
-						<img src=${picture} class="search_result_image mr-3">
-						<div class="media-body">
-							<h3><span>${user.name}</span><button type="button" class="btn btn-primary search_media_btn">Add</button></h3>
-							Status: ${user.status || 'none'}
-						</div>
-						<input type="hidden" value=${user._id}>
-					</div>`);
-				});
-				if(data.length == 0) {
-					$('#search_results_1').append('No users found');
+				$('.no-results').remove();
+				if(data.result == 'none') {
+					$('#search_results_1').parent().append('<div class="no-results">No users found</div>');
+					return;
 				}
+				let {user, isFriended} = data;
+				let picture;
+				if(user.picture) picture = user.picture;
+				else picture = '/images/blank_profile.png';
+				$('#search_results_1').append(`<div class="media search_media">
+					<img src=${picture} class="search_result_image mr-3">
+					<div class="media-body">
+						<h3><span>${user.name}</span><button type="button" class="btn btn-primary search_media_btn">${isFriended ? 'Already Friend' : 'Add'}</button></h3>
+						Status: ${user.status || 'none'}
+					</div>
+					<input type="hidden" value=${user._id}>
+				</div>`);
 				$('#search_results_1').show();
 				$('.search_result_image').height($('.search_result_image').width());
 				console.log('success');

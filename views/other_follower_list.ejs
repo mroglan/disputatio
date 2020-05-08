@@ -30,7 +30,9 @@
 											alreadyFriended = true;
 										}
 									}); %>
-									<% if(alreadyFriended) { %>
+									<% if(follower._id.toString() == user._id.toString()) { %>
+										<div class="text-center">You</div>
+									<% } else if(alreadyFriended) { %>
 										<div class="text-center"><button type="button" class="btn btn-success" value="unfriend">Friended</button></div>
 									<% } else { %>
 										<div class="text-center"><button type="button" class="btn btn-primary" value="friend">Add friend</button></div>

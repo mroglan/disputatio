@@ -14,15 +14,17 @@
 						<div class="card-body">
 							<h1 class="display-1 card-title" id="friend-btn-holder">
 								<%= profile.name %>
-								<button type="button" class="btn friend-button <%= isFriend ? 'btn-danger' : 'btn-success' %>" value="<%= isFriend ? 'unfriend' : 'friend' %>">
-									<%= isFriend ? 'Unfriend' : 'Friend' %>
-								</button>
+								<% if(profile._id.toString() != user._id.toString()) { %>
+									<button type="button" class="btn friend-button <%= isFriend ? 'btn-danger' : 'btn-success' %>" value="<%= isFriend ? 'unfriend' : 'friend' %>">
+										<%= isFriend ? 'Unfriend' : 'Friend' %>
+									</button>
+								<% } %>
 							</h1>
 							<h4 class="card-subtitle mt-3"><span class="text-light">&lt;</span><%= profile.tag %><span class="text-light">&gt;</span></h4>
 							<h4 class="card-subtitle mt-3" id="contact-btn-holder">
 								Status: <%= profile.status ? profile.status : 'None' %>
 								<% if(contact) { %>
-									<% if(contact.reserved == 'false' || hasFriended) { %>
+									<% if(profile._id.toString() == user._id.toString() || contact.reserved == 'false' || hasFriended) { %>
 										<button type="button" class="btn btn-secondary contact-btn" data-toggle="modal" data-target="#contactModal">View Contact</button>
 										<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModal" aria-hidden="true">
 											<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">

@@ -254,21 +254,22 @@ exports.change_picture = function(req, res, next) {
 };
 
 exports.friend_search_1 = function(req, res, next) {
-	let count = 0;
-	let userArray = [];
-	User.find().exec((err, users) => {
-		users.forEach(function(user) {
-			//console.log(user.name.toLowerCase() + ', ' + req.body.search.toLowerCase());
-			if(user.name.toLowerCase() == req.body.search.toLowerCase()) {
-				//console.log('match!');
-				userArray.push(user);
-			} 
-			count++;
-			if(count == users.length) {
-				console.log(userArray);
-				res.send(userArray);
+	//console.log(req.body);
+	User.findOne({tag: req.body.search}).exec((err, user) => {
+		if(err) return next(err);
+		if(!user || user._id.toString() == req.user._id.toString()) {
+			console.log('sending false');
+			res.send({result: 'none'});
+			return;
+		}
+		console.log(user);
+		let isFriended = false;
+		req.user.friends.forEach(function(friend) {
+			if(friend.toString() === user._id.toString()) {
+				isFriended = true;
 			}
 		});
+		res.send({result: 'true', user: user, isFriended: isFriended});
 	});
 };
 

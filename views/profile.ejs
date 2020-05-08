@@ -263,13 +263,20 @@
 							<div class="card-body">
 								<div class="row no-gutters">
 									<div class="col-9">
-										<input type="text" id="friend_search" class="form-control bg-transparent border-primary" placeholder="Username">
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text">&lt;</span>
+											</div>
+											<input type="text" id="friend_search" class="form-control bg-transparent border-primary" placeholder="Tag">
+											<div class="input-group-append">
+												<span class="input-group-text">&gt;</span>
+											</div>
+										</div>
 									</div>
 									<div class="col-3">
 										<div class="ml-3"><button type="button" class="btn btn-success" id="friend_search_btn"><i class="fas fa-search"></i></button></div>
 									</div>
 								</div>
-								<small class="text-danger p_link">Advanced Search</small>
 								<div id="search_results_1">
 								</div>
 							</div>
