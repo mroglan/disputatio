@@ -89,6 +89,7 @@
 							<h6><%= profile.bio %></h6>
 						</div>
 						<div class="card-footer row">
+							<div class="col-6"><p class="font-weight-bold text-light">Joined <%= profile.date_format %></p></div>
 							<div class="col-3"><a href="friends" class="text-dark"><p id="friended_num" class="font-weight-bold"><%= profile.friends.length %> friended</p></a></div>
 							<div class="col-3"><a href="followers" class="text-dark"><p id="friends_num" class="font-weight-bold"><%= profile.followers.length %> followers</p></a></div>
 						</div>

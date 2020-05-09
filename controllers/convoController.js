@@ -158,7 +158,7 @@ exports.convo_get = function(req, res, next) {
 				res.render('convo_list', {user: result.user, convos: result.convos, selected: result.selected, a1: 'convo_list'});
 			});
 		} else {
-			res.redirect('/conversations');
+			res.redirect('/chats/conversations');
 		}
 	});
 };

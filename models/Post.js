@@ -8,12 +8,14 @@ PostSchema = new Schema({
 	date: {type: Date, default: Date.now()},
 	message: {type: String},
 	title: {type: String},
+	special: {type: Boolean, default: false},
+	files: [{fileType: {type: String}, location: {type: String}}],
 	likes: [{type: Schema.Types.ObjectId, ref: 'User'}],
 	dislikes: [{type: Schema.Types.ObjectId, ref: 'User'}],
 	shares: [{type: Schema.Types.ObjectId, ref: 'User'}],
 	original: {type: Schema.Types.ObjectId, ref: 'Post'},
-	replies: [{type: Schema.Types.ObjectId, ref: 'Post'}],
-	replyTo: {type: Schema.Types.ObjectId, ref: 'Post'}
+	replies: [{type: Schema.Types.ObjectId, ref: 'Reply'}],
+	//replyTo: {type: Schema.Types.ObjectId, ref: 'Post'}
 });
 
 PostSchema.virtual('date_format').get(function() {

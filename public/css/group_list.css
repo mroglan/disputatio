@@ -1,0 +1,9 @@
+#user-card a:hover {
+	text-decoration: none;
+}
+
+.hidden {
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}

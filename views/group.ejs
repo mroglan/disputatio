@@ -1,0 +1,59 @@
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<div class="container" style="min-height:100vh">
+			<div class="row pt-5">
+				<div class="col-xl-3 col-lg-4 col-6 pt-3">
+					<div class="card" id="user-card">
+						<div class="card-header pb-0">
+							<a href="/users/profile">
+								<div class="row no-gutters">
+									<div class="col-3">
+										<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+											<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= user.picture || '/images/blank_profile.png' %>">
+										</div>
+									</div>
+									<div class="col-9 pl-3">
+										<h5 class="text-primary"><%= user.name %></h5>
+										<h6 class="text-dark">&lt;<%= user.tag %>&gt;</h6>
+									</div>
+								</div>
+							</a>
+						</div>
+						<div class="card-body py-1">
+							<div class="d-flex flex-wrap justify-content-around">
+								<a href="/users/profile/groups"><%= groups.length %> groups</a>
+								<a href="/users/profile/invites">0 invites</a>
+							</div>
+						</div>
+					</div>
+					<div class="card card-body p-0 mt-3">
+						<div class="d-flex flex-wrap justify-content-around">
+							<div><button type="button" class="btn" id="create-group-btn"><span class="text-success" style="vertical-align:top"><i class="fas fa-plus-square"></i> New</span></button></div>
+							<div><button type="button" class="btn" id="delete-group-btn" data-toggle="modal" data-target="#deleteModal">
+								<span class="text-danger" style="vertical-align:top"><i class="fas fa-minus-square"></i> Leave</span>
+							</button></div>
+						</div>
+						<div class="list-group overflow-auto pt-3" style="max-height:700px">
+							<% groups.forEach(function(group) { %>
+								<a href="<%= group.url %>" class="list-group-item list-group-item-action position-relative <%= selected._id.toString() == group._id.toString() ? 'active' : '' %>">
+									<div class="row no-gutters">
+										<div class="col-2">
+											<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+												<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= group.picture || '/images/oort-cloud.jpg' %>">
+											</div>
+										</div>
+										<div class="col-10 pl-3 pt-2">
+											<h6><%= group.name %></h6>
+										</div>
+									</div>
+								</a>
+							<% }); %>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -7,6 +7,7 @@ const fs = require('fs');
 // Models
 const User = require('../models/User');
 const Contact = require('../models/Contact');
+const NewPosts = require('../models/NewPosts');
 
 const {check, validationResult} = require('express-validator');
 const {sanitizeBody} = require('express-validator/filter');
@@ -73,6 +74,14 @@ exports.register_post = [
 								newUser.password = hash;
 								//Save user 
 								newUser.save().then(user => {
+									const newPosts = new NewPosts({
+										user: newUser._id,
+										posts: [],
+										new_posts: []
+									});
+									newPosts.save(err => {
+										if(err) return next(err);
+									});
 									req.flash('success_msg', 'You are now registered and can log in');
 									res.redirect('/users/login');
 								}).catch(err => console.log(err));

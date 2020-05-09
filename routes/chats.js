@@ -2,6 +2,34 @@ const express = require('express');
 const router = express.Router();
 const {ensureAuthenticated, ensureNotAuthenticated, ensureAdmin} = require('../config/auth');
 
+const multer = require('multer');
+const DIR = './public/images';
+
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, DIR);
+	}, filename: (req, file, cb) => {
+		const fileName = file.originalname.toLowerCase().split(' ').join('-');
+		cb(null, fileName);
+	}
+});
+
+var uploadPic = multer({
+	storage: storage,
+	fileFilter: (req, file, cb) => {
+		if(file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+			cb(null, true);
+		} else {
+			cb(null, false);
+			return cb(new Error('Only .png, .jpg and .jpeg allowed!'));
+		}
+	}
+});
+
+var uploadAny = multer({
+	storage: storage
+});
+
 //Controllers
 const ConvoController = require('../controllers/convoController');
 const NotificationController = require('../controllers/notificationController');
@@ -37,5 +65,11 @@ router.post('/conversations/:id/get_messages', ensureAuthenticated, ConvoControl
 
 //Groups
 router.get('/groups', ensureAuthenticated, GroupController.groups_get);
+
+router.post('/groups/new_picture', uploadPic.single('image'), GroupController.upload_picture);
+
+router.post('/groups/new_group', GroupController.groups_create);
+
+router.get('/groups/:id', ensureAuthenticated, GroupController.group_get);
 
 module.exports = router;
