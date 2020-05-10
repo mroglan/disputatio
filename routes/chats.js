@@ -4,13 +4,25 @@ const {ensureAuthenticated, ensureNotAuthenticated, ensureAdmin} = require('../c
 
 const multer = require('multer');
 const DIR = './public/images';
+const DIR2 = './public/files';
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, DIR);
 	}, filename: (req, file, cb) => {
 		const fileName = file.originalname.toLowerCase().split(' ').join('-');
-		cb(null, fileName);
+		var resultFileName = fileName.slice(0, fileName.indexOf('.')) + req.user._id.toString() + fileName.slice(fileName.indexOf('.'));
+		cb(null, resultFileName);
+	}
+});
+
+const storage2 = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, DIR2);
+	}, filename: (req, file, cb) => {
+		const fileName = file.originalname.toLowerCase().split(' ').join('-');
+		var resultFileName = fileName.slice(0, fileName.indexOf('.')) + req.user._id.toString() + fileName.slice(fileName.indexOf('.'));
+		cb(null, resultFileName);
 	}
 });
 
@@ -27,7 +39,7 @@ var uploadPic = multer({
 });
 
 var uploadAny = multer({
-	storage: storage
+	storage: storage2
 });
 
 //Controllers
@@ -71,5 +83,9 @@ router.post('/groups/new_picture', uploadPic.single('image'), GroupController.up
 router.post('/groups/new_group', GroupController.groups_create);
 
 router.get('/groups/:id', ensureAuthenticated, GroupController.group_get);
+
+router.post('/groups/new_post/file_upload', uploadAny.single('upFile'), GroupController.post_file);
+
+router.post('/groups/new_post/image_upload', uploadPic.single('image'), GroupController.post_image);
 
 module.exports = router;

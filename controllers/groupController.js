@@ -74,3 +74,12 @@ exports.group_get = function(req, res, next) {
 		});
 	});
 };
+
+exports.post_file = function(req, res, next) {
+	console.log(req.file.filename);
+	res.send({path: req.file.path.substring(req.file.path.indexOf('c') + 1), name: req.file.filename});
+};
+
+exports.post_image = function(req, res, next) {
+	res.send(req.file.path.substring(req.file.path.indexOf('c') + 1));
+};

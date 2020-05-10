@@ -10,6 +10,9 @@
 			</div>
 			<div class="row full-height">
 				<div class="col-xl-3 col-lg-4 col-6">
+					<div class="text-center my-3">
+						<button type="button" id="new-post-btn" class="btn btn-success">New Post</button>
+					</div>
 					<div class="card" id="user-card">
 						<div class="card-header pb-0">
 							<a href="/users/profile">
@@ -58,7 +61,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-xl-6 ml-xl-3">
+				<div class="col-xl-6 px-xl-3">
 					<div id="create-group-div" class="<%= typeof errors != 'undefined' ? '' : 'd-none' %>">
 						<div class="card card-body">
 							<h1 class="text-center card-title">New Group</h1>
@@ -103,8 +106,11 @@
 						</div>
 					</div>
 					<div id="all-posts">
-						<div class="card card-body">
+						<div class="card card-body d-none" id="new-post-div">
 							<form method="POST" action="/chats/groups/new_post">
+								<div class="form-group">
+									<input type="text" name="title" class="form-control" placeholder="Optional title">
+								</div>
 								<div class="form-group">
 									<textarea type="text" rows="3" class="form-control bg-none border-primary" name="message" placeholder="Type your post here"></textarea>
 								</div>
@@ -119,7 +125,31 @@
 										</select>
 									</div>
 								</div>
+								<ul class="list-group pb-3" id="file-upload-list">
+									<li class="hidden list-group-item pb-0 pt-2" id="file-upload-item-template">
+										<div class="row no-gutters">
+											<div class="col-11 pr-3">
+												<a class="filename"></a>
+											</div>
+											<div class="col-1">
+												<button type="button" class="btn delete-file text-danger"><i class="far fa-trash-alt"></i></button>
+											</div>
+										</div>
+										<input type="hidden">
+									</li>
+								</ul>
+								<div class="d-flex flex-wrap" id="image-upload-container">
+									<div class="hidden position-relative overflow-hidden" id="image-upload-template">
+										<img class="img-fluid" style="max-width:100px;max-height:100px;min-width:50px">
+										<button type="button" class="btn btn-dark delete-image text-danger position-absolute" style="top:0;right:0"><i class="far fa-trash-alt"></i></button>
+										<input type="hidden">
+									</div>
+								</div>
+								<input type="file" class="hidden" id="file-upload" name="upFile">
+								<input type="file" class="hidden" id="image-upload" name="upImage">
 								<button type="submit" class="btn btn-success">Post</button>
+								<button type="button" class="btn btn-info" title="Attach file" id="file-upload-btn"><i class="fas fa-paperclip"></i></button>
+								<button type="button" class="btn btn-info" title="Attach photo" id="image-upload-btn"><i class="far fa-image"></i></button>
 							</form>
 						</div>
 						<% posts.forEach(function(post) { %>
