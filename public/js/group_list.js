@@ -71,7 +71,8 @@ $(() => {
 					console.log('success');
 					$('#file-upload-list').append($('#file-upload-item-template').clone());
 					$('#file-upload-list').children().last().removeAttr('id').removeClass('hidden').find('.filename').text(data.name).attr('href', `${data.path}`)
-					.closest('.list-group-item').find('input').attr('name', 'file_upload').val(data.path);
+					.closest('.list-group-item').find('input.file-path').attr('name', 'file_upload').val(data.path)
+					.closest('.list-group-item').find('input.file-name').attr('name', 'file_name').val(data.name);
 				}
 			});
 		}

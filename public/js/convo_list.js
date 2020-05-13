@@ -153,3 +153,9 @@ function checkSideBar() {
 		}
 	});
 }
+
+function checkEnter(e) {
+	if(e.keyCode == 13) {
+		$('#send-msg-btn').trigger('click');
+	}
+}

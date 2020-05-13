@@ -134,7 +134,8 @@
 												<button type="button" class="btn delete-file text-danger"><i class="far fa-trash-alt"></i></button>
 											</div>
 										</div>
-										<input type="hidden">
+										<input type="hidden" class="file-path">
+										<input type="hidden" class="file-name">
 									</li>
 								</ul>
 								<div class="d-flex flex-wrap" id="image-upload-container">
@@ -149,8 +150,57 @@
 								<button type="submit" class="btn btn-success">Post</button>
 								<button type="button" class="btn btn-info" title="Attach file" id="file-upload-btn"><i class="fas fa-paperclip"></i></button>
 								<button type="button" class="btn btn-info" title="Attach photo" id="image-upload-btn"><i class="far fa-image"></i></button>
+								<input type="hidden" name="indiv_group" value="true">
 							</form>
 						</div>
+						<% posts.forEach(function(post) { %>
+							<div class="card">
+								<div class="card-header pb-0">
+									<div class="row">
+										<div class="col-2">
+											<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+												<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= post.writer.picture || '/images/blank_profile.png' %>">
+											</div>
+										</div>
+										<div class="col-10 pt-1">
+											<div class="row no-gutters">
+												<div class="col-8">
+													<h4 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark"><%= post.writer._id.toString() === user._id.toString() ? 'You' : post.writer.name %></a></h4>
+													<h6 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark">&lt;<%= post.writer.tag %>&gt;</a></h6>
+												</div>
+												<div class="col-4">
+													<p><%= post.date_relative %></p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="card-body pt-0">
+									<% if(post.title) { %>
+										<div class="w-100"><h5 class="text-center overflow-ellipsis"><%= post.title %></h5></div>
+									<% } %>
+									<div class="row">
+										<div class="col-11 mx-auto">
+											<%= post.message %>
+										</div>
+									</div>
+									<div class="row no-gutters">
+										<div class="w-100 d-flex flex-wrap">
+											<% post.images.forEach(function(image) { %>
+												<a href="<%= image %>"><img style="max-height:200px" src="<%= image %>"></a>
+											<% }); %>
+										</div>
+									</div>
+									<ul class="list-group">
+										<% post.files.forEach(function(file) { %>
+											<li class="list-group-item">
+												<a href="<%= file.path %>"><%= file.name %></a>
+											</li>
+										<% }); %>
+									</ul>
+								</div>
+							</div>
+						<% }); %>
 					</div>
 				</div>
 				<div class="col-xl-3 pt-3" id="right-sidebar">

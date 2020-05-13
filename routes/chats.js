@@ -88,4 +88,6 @@ router.post('/groups/new_post/file_upload', uploadAny.single('upFile'), GroupCon
 
 router.post('/groups/new_post/image_upload', uploadPic.single('image'), GroupController.post_image);
 
+router.post('/groups/new_post', GroupController.new_post);
+
 module.exports = router;

@@ -130,8 +130,8 @@
 								</div>
 								<div class="writing">
 									<form id="form-message" method="POST" action="">
-										<textarea id="message" name="message" required placeholder="Type your message here"></textarea>
-										<button type="submit" class="btn btn-primary">Send</button>
+										<textarea onkeypress="checkEnter(event)" id="message" name="message" required placeholder="Type your message here"></textarea>
+										<button type="submit" class="btn btn-primary" id="send-msg-btn">Send</button>
 									</form>
 								</div>
 							</div>
