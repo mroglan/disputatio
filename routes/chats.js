@@ -82,12 +82,40 @@ router.post('/groups/new_picture', uploadPic.single('image'), GroupController.up
 
 router.post('/groups/new_group', GroupController.groups_create);
 
+router.get('/groups/find_recommended_groups', ensureAuthenticated, GroupController.find_recommended_groups);
+
 router.get('/groups/:id', ensureAuthenticated, GroupController.group_get);
+
+router.get('/groups/:id/members', ensureAuthenticated, GroupController.group_members);
+
+router.get('/groups/:id/replies', ensureAuthenticated, GroupController.post_replies);
+
+//router.get('/groups/:group/:post', ensureAuthenticated, GroupController.post_get);
 
 router.post('/groups/new_post/file_upload', uploadAny.single('upFile'), GroupController.post_file);
 
 router.post('/groups/new_post/image_upload', uploadPic.single('image'), GroupController.post_image);
 
 router.post('/groups/new_post', GroupController.new_post);
+
+router.post('/groups/delete_groups', GroupController.delete_groups);
+
+router.post('/groups/join_group', GroupController.join_group);
+
+router.post('/groups/invite_members', GroupController.invite_members);
+
+router.post('/groups/accept_invite', GroupController.accept_invite);
+
+router.post('/groups/decline_invite', GroupController.decline_invite);
+
+router.post('/groups/like_post', GroupController.like_post);
+
+router.post('/groups/dislike_post', GroupController.dislike_post);
+
+router.post('/groups/:id/post_reply', GroupController.post_reply);
+
+router.post('/groups/:id', GroupController.add_posts);
+
+router.post('/groups', GroupController.add_general_posts);
 
 module.exports = router;

@@ -9,7 +9,7 @@
 				</div>
 			</div>
 			<div class="row full-height">
-				<div class="col-xl-3 col-lg-4 col-6">
+				<div class="col-xl-3 col-lg-4 col-6" id="left-sidebar">
 					<div class="text-center my-3">
 						<button type="button" id="new-post-btn" class="btn btn-success">New Post</button>
 					</div>
@@ -32,7 +32,7 @@
 						<div class="card-body py-1">
 							<div class="d-flex flex-wrap justify-content-around">
 								<a href="/users/profile/groups"><%= groups.length %> groups</a>
-								<a href="/users/profile/invites">0 invites</a>
+								<a href="/users/profile/invites"><%= invites.length %> invites</a>
 							</div>
 						</div>
 					</div>
@@ -61,7 +61,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-xl-6 px-xl-3">
+				<div class="col-xl-6 px-xl-3" id="center">
 					<div id="create-group-div" class="<%= typeof errors != 'undefined' ? '' : 'd-none' %>">
 						<div class="card card-body">
 							<h1 class="text-center card-title">New Group</h1>
@@ -154,63 +154,320 @@
 								<input type="hidden" name="indiv_group" value="false">
 							</form>
 						</div>
-						<% posts.forEach(function(post) { %>
-							<div class="card">
-								<div class="card-header pb-0">
-									<div class="row">
-										<div class="col-2">
-											<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
-												<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= post.writer.picture || '/images/blank_profile.png' %>">
-											</div>
-										</div>
-										<div class="col-10 pt-1">
-											<div class="row no-gutters">
-												<div class="col-8">
-													<h4 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark"><%= post.writer._id.toString() === user._id.toString() ? 'You' : post.writer.name %></a></h4>
-													<h6 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark">&lt;<%= post.writer.tag %>&gt;</a></h6>
-												</div>
-												<div class="col-4">
-													<p><%= post.date_relative %></p>
-												</div>
-											</div>
+						<div class="card d-none" id="post-template">
+							<input type="hidden" class="postId">
+							<input type="hidden" class="postGroupId">
+							<div class="card-header pb-0">
+								<div class="row">
+									<div class="col-2">
+										<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+											<img class="img-fluid" style="min-height:100%;min-width:100%">
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-2"></div>
-										<div class="col-10">
-											<p class="overflow-ellipsis" style="font-size:1.5rem">To <a href="<%= post.group.url %>" class="d-inline"><%= post.group.name %></a></p>
+									<div class="col-10 pt-1">
+										<div class="row no-gutters">
+											<div class="col-8">
+												<h4 class="overflow-ellipsis writer-name"><a class="text-dark"></a></h4>
+												<h6 class="overflow-ellipsis"><a class="text-dark"></a></h6>
+											</div>
+											<div class="col-4">
+												<p class="post-date"></p>
+											</div>
 										</div>
 									</div>
 								</div>
-								<div class="card-body pt-0">
-									<% if(post.title) { %>
-										<div class="w-100"><h5 class="text-center overflow-ellipsis"><%= post.title %></h5></div>
-									<% } %>
-									<div class="row">
-										<div class="col-11 mx-auto">
-											<%= post.message %>
-										</div>
+								<div class="row">
+									<div class="col-2"></div>
+									<div class="col-10">
+										<p class="overflow-ellipsis group-identifyer" style="font-size:1.5rem">To <a class="d-inline"></a></p>
 									</div>
-									<div class="row no-gutters">
-										<div class="w-100 d-flex flex-wrap">
-											<% post.images.forEach(function(image) { %>
-												<a href="<%= image %>"><img style="max-height:200px" src="<%= image %>"></a>
-											<% }); %>
-										</div>
-									</div>
-									<ul class="list-group">
-										<% post.files.forEach(function(file) { %>
-											<li class="list-group-item">
-												<a href="<%= file.path %>"><%= file.name %></a>
-											</li>
-										<% }); %>
-									</ul>
 								</div>
 							</div>
-						<% }); %>
+							<div class="card-body pt-0 post-content">
+
+									<div class="w-100 post-content"><h5 class="text-center overflow-ellipsis post-title" style="line-height:2rem"></h5></div>
+
+								<div class="row post-content">
+									<div class="col-11 mx-auto post-message">
+										
+									</div>
+									<input type="hidden" value="unedited">
+								</div>
+								<div class="row no-gutters">
+									<div class="w-100 d-flex flex-wrap image-list">
+										
+									</div>
+								</div>
+								<ul class="list-group">
+									
+								</ul>
+							</div>
+							<div class="card-footer p-0">
+								<div class="d-flex justify-content-around">
+									<button type="button" class="btn text-dark reply-info">
+										<span class="icon"><i class="far fa-comment-dots"></i> </span></span><span class="number"></span>
+									</button>
+									<button type="button" class="btn text-dark share-info">
+										<span class="icon"><i class="fas fa-share-square"></i> </span></span><span class="number"></span>
+									</button>
+									<button type="button" class="btn text-dark like-info">
+										<span class="icon"><i class="fas fa-thumbs-up"></i> </span></span><span class="number"></span>
+									</button>
+									<button type="button" class="btn text-dark dislike-info">
+										<span class="icon"><i class="fas fa-thumbs-down"></i> </span></span><span class="number"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div id="post-list">
+							<% posts.forEach(function(post) { %>
+								<div class="card mb-2">
+									<input type="hidden" class="postId" value="<%= post._id %>">
+									<input type="hidden" class="postGroupId" value="<%= post.group._id %>">
+									<div class="card-header pb-0">
+										<div class="row">
+											<div class="col-2">
+												<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+													<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= post.writer.picture || '/images/blank_profile.png' %>">
+												</div>
+											</div>
+											<div class="col-10 pt-1">
+												<div class="row no-gutters">
+													<div class="col-8">
+														<h4 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark"><%= post.writer._id.toString() === user._id.toString() ? 'You' : post.writer.name %></a></h4>
+														<h6 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark">&lt;<%= post.writer.tag %>&gt;</a></h6>
+													</div>
+													<div class="col-4">
+														<p><%= post.date_relative %></p>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-2"></div>
+											<div class="col-10">
+												<p class="overflow-ellipsis group-identifyer" style="font-size:1.5rem">To <a href="<%= post.group.url %>" class="d-inline"><%= post.group.name %></a></p>
+											</div>
+										</div>
+									</div>
+									<div class="card-body pt-0">
+										<% if(post.title) { %>
+											<div class="w-100 post-content"><h5 class="text-center overflow-ellipsis"><%= post.title %></h5></div>
+										<% } %>
+										<div class="row post-content">
+											<div class="col-11 mx-auto post-message">
+												<%= post.message %>
+											</div>
+											<input type="hidden" value="unedited">
+										</div>
+										<div class="row no-gutters">
+											<div class="w-100 d-flex flex-wrap">
+												<% post.images.forEach(function(image) { %>
+													<a href="<%= image %>"><img style="max-height:200px" src="<%= image %>"></a>
+												<% }); %>
+											</div>
+										</div>
+										<ul class="list-group">
+											<% post.files.forEach(function(file) { %>
+												<li class="list-group-item">
+													<a href="<%= file.path %>"><%= file.name %></a>
+												</li>
+											<% }); %>
+										</ul>
+									</div>
+									<div class="card-footer p-0">
+										<div class="d-flex justify-content-around">
+											<button type="button" class="btn text-dark reply-info">
+												<span><i class="far fa-comment-dots"></i> </span><%= post.replies.length %>
+											</button>
+											<button type="button" class="btn text-dark share-info">
+												<span class="<%= post.shares.includes(user._id) ? 'text-success' : '' %> icon"><i class="fas fa-share-square"></i> </span><span class="number"><%= post.shares.length %></span>
+											</button>
+											<button type="button" class="btn text-dark like-info">
+												<span class="<%= post.likes.includes(user._id) ? 'text-success' : '' %> icon"><i class="fas fa-thumbs-up"></i> </span><span class="number"><%= post.likes.length %></span>
+											</button>
+											<button type="button" class="btn text-dark dislike-info">
+												<span class="<%= post.dislikes.includes(user._id) ? 'text-danger' : '' %> icon"><i class="fas fa-thumbs-down"></i> </span><span class="number"><%= post.dislikes.length %></span>
+											</button>
+										</div>
+									</div>
+								</div>
+							<% }); %>
+						</div>
+						<% if(posts.length === 10) { %>
+							<div class="mt-3">
+								<div class="w-100 text-center">
+									<button type="button" id="load-more-btn" class="btn btn-primary">
+										<span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+										<span id="load-more-txt">Load More Messages</span>
+										<span class="d-none">Loading...</span>
+									</button>
+								</div>
+							</div>
+						<% } %>
 					</div>
+				</div>
+				<div class="col-xl-3 col-lg-4 col-6 pt-3" id="right-sidebar">
+					<div class="card">
+						<div class="card-header pb-0">
+							<h6 class="card-title text-center">Recommended Groups</h6>
+						</div>
+						<div class="card-body p-0">
+							<div id="recommended-list" class="list-group overflow-auto" style="max-height:500px">
+							</div>
+						</div>
+					</div>
+					<% if(invites.length > 0) { %>
+						<div class="card mt-3">
+							<div class="card-header pb-0 mb-2">
+								<h6 class="card-title text-center">Recent Invites</h6>
+							</div>
+							<div id="inviteCarousel" class="carousel slide" data-ride="carousel">
+								<div class="carousel-inner">
+									<% invites.sort((a, b) => b.date - a.date); %>
+									<% invites.forEach(function(invite, index) { %>
+										<div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+											<div class="w-25 mx-auto rounded-circle profile-pic-div overflow-hidden">
+												<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= invite.group.picture %>">
+											</div>
+											<div class="text-center w-75 mx-auto">
+												<h6><a href="<%= invite.group.url %>" class="text-dark"><%= invite.group.name %></a></h6>
+											</div>
+											<hr class="my-1">
+											<div>
+												From <a href="/users/<%= invite.sender._id %>/profile">&lt;<%= invite.sender.tag %>&gt;</a>
+											</div>
+											<div>
+												<p><%= invite.message %></p>
+											</div>
+											<div class="w-100 d-flex justify-content-around">
+												<button type="button" class="btn btn-success accept-invite-btn">Accept</button>
+												<button type="button" class="btn btn-danger decline-invite-btn">Decline</button>
+												<input type="hidden" class="inviteGroupId" value="<%= invite.group._id %>">
+												<input type="hidden" class="inviteId" value="<%= invite._id %>">
+											</div>
+										</div>
+									<% }); %>
+								</div>
+								<a class="carousel-control-prev" href="#inviteCarousel" role="button" data-slide="prev">
+									<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+									<span class="sr-only">Previous</span>
+								</a>
+								<a class="carousel-control-next" href="#inviteCarousel" role="button" data-slide="next">
+									<span class="carousel-control-next-icon" aria-hidden="true"></span>
+									<span class="sr-only">Next</span>
+								</a>
+							</div>
+						</div>
+					<% } %>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
+
+<input type="hidden" id="userId" value="<%= user._id %>">
+
+<div class="hidden">
+	<a class="list-group-item list-group-item-action position-relative" id="recommended-group-template">
+		<div class="row no-gutters">
+			<div class="col-2">
+				<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+					<img class="img-fluid" style="min-height:100%;min-width:100%">
+				</div>
+			</div>
+			<div class="col-10 pl-3 pt-2">
+				<h6></h6>
+			</div>
+		</div>
+	</a>
+</div>
+
+<div class="hidden">
+	<div class="media mb-2" id="reply-template">
+		<div class="rounded-circle overflow-hidden mx-3 mb-3" style="width:2rem;height:2rem">
+			<img class="img-fluid" style="min-width:100%;min-height:100%">
+		</div>
+		<div class="media-body">
+			<div class="overflow-ellipsis reply-heading"><h6 class="d-inline"></h6><h6 class="font-weight-normal d-inline"></h6></div>
+			<div class="reply-message"></div>
+			<div class="row no-gutters">
+				<div class="w-100 d-flex flex-wrap reply-images">
+				</div>
+			</div>
+			<ul class="list-group reply-file-list">
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="hidden" id="new-reply-container">
+	<div id="new-reply">
+		<textarea rows="2" id="new-reply-message" placeholder="Type your reply here" class="form-control my-2"></textarea>
+		<ul class="list-group" id="reply-file-upload-list"></ul>
+		<div class="d-flex flex-wrap" id="reply-image-upload-container"></div>
+		<input type="file" class="hidden" id="reply-file-upload" name="upFile">
+		<input type="file" class="hidden" id="reply-image-upload" name="upImage">
+		<button type="button" id="reply-btn" class="btn btn-success">Reply</button>
+		<button type="button" class="btn btn-info" title="Attach file" id="reply-file-upload-btn"><i class="fas fa-paperclip"></i></button>
+		<button type="button" class="btn btn-info" title="Attach photo" id="reply-image-upload-btn"><i class="far fa-image"></i></button>
+		<input type="hidden" id="typeof-reply">
+		<input type="hidden" id="parent-id">
+	</div>
+</div>
+
+<li class="hidden list-group-item pb-0 pt-2" id="reply-file-upload-item-template">
+	<div class="row no-gutters">
+		<div class="col-11 pr-3">
+			<a class="filename"></a>
+		</div>
+		<div class="col-1">
+			<button type="button" class="btn delete-file text-danger"><i class="far fa-trash-alt"></i></button>
+		</div>
+	</div>
+	<input type="hidden" class="reply-file-path" value="template">
+	<input type="hidden" class="reply-file-name" value="template">
+</li>
+
+<div class="hidden position-relative overflow-hidden" id="reply-image-upload-template">
+	<img class="img-fluid" style="max-width:100px;max-height:100px;min-width:50px">
+	<button type="button" class="btn btn-dark delete-image text-danger position-absolute" style="top:0;right:0"><i class="far fa-trash-alt"></i></button>
+	<input type="hidden" class="reply-image-path" value="template">
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
+	<form method="POST" action="/chats/groups/delete_groups">
+		<div class="modal-dialog modal-dialog-scrollable" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Select Groups to Leave</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="list-group">
+						<% groups.forEach(function(group) { %>
+							<button type="button" class="list-group-item list-group-item-action pb-0 btn border-primary delete-group-select">
+								<div class="row no-gutters">
+									<div class="col-2">
+										<h1><span class="text-dark"><i class="far fa-trash-alt"></i></span></h1>
+									</div>
+									<div class="col-10 pl-3">
+										<h4 class="mb-0"><%= group.name %> <span class="badge badge-info"></span></h4>
+										<p><%= group.users.length %> Members</p>
+									</div>
+								</div>
+								<input type="checkbox" value="<%= group._id %>" class="hidden delete-group-input" name="delete_group">
+							</button>
+						<% }); %>
+					</ul>
+				</div>
+				<div class="modal-footer d-flex justify-content-around">
+					<button type="submit" class="btn btn-danger">Leave</button>
+					<button type="button" data-dismiss="modal" class="btn btn-secondary">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</form>
 </div>

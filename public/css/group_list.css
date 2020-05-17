@@ -15,3 +15,29 @@
 	overflow: hidden;
 	white-space: nowrap;
 }
+
+@media (max-width: 1200px) {
+	#right-sidebar {
+		order: 2;
+	}
+	#left-sidebar {
+		order: 1;
+	}
+	#center {
+		order: 3;
+	}
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: invert(1);
+}
+
+.carousel-control-prev, .carousel-control-next {
+	height: 50%;
+}
+
+.post-content {
+	cursor: pointer;
+	pointer-events: auto;
+}

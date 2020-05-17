@@ -1,5 +1,9 @@
 $(() => {
 	
+	$('.friend_pic_div').each(function() {
+		$(this).height($(this).width());
+	});
+	
 	$('.card-footer button').click(function() {
 		//console.log($(this).val());
 		let id = $(this).closest('.card').find('input').val();

@@ -7,6 +7,8 @@ const ReplySchema = new Schema({
 	message: {type: String},
 	replyTo: {type: Schema.Types.ObjectId, ref: 'Post'},
 	date: {type: Date, default: Date.now()},
+	files: [{name: {type: String}, path: {type: String}}],
+	images: [{type: String}],
 	likes: [{type: Schema.Types.ObjectId, ref: 'User'}],
 	dislikes: [{type: Schema.Types.ObjectId, ref: 'User'}],
 	replies: [{type: Schema.Types.ObjectId, ref: 'Reply'}]

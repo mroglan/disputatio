@@ -441,3 +441,14 @@ exports.other_followers_get = function(req, res, next) {
 		res.render('other_follower_list', {user: req.user, profile: user, followers: user.followers, a1: 'other_follower_list'});
 	});
 };
+
+exports.find_user = function(req, res, next) {
+	User.findOne({tag: req.params.tag}).exec((err, user) => {
+		if(err) return next(err);
+		if(!user) {
+			res.redirect('/users/profile/not_found');
+		} else {
+			res.redirect(`/users/${user._id}/profile`);
+		}
+	});
+}

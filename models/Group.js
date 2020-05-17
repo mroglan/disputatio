@@ -10,8 +10,8 @@ const GroupSchema = new Schema({
 	status: {type: String},
 	picture: {type: String},
 	date: {type: Date, default: Date.now()},
-	posts: [{type: Schema.Types.ObjectId, ref: 'Post'}]
-	//new_posts: [{type: Schema.Types.ObjectId, ref: 'NewPosts'}]
+	posts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
+	code: {type: String, default: 'none'}
 });
 
 GroupSchema.virtual('date_format').get(function() {
