@@ -37,7 +37,7 @@
 	height: 50%;
 }
 
-.post-content {
+.post-content, .reply-content, .share-content {
 	cursor: pointer;
 	pointer-events: auto;
 }

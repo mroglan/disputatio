@@ -16,7 +16,9 @@ exports.groups_get = function(req, res, next) {
 		user: callback => User.findById(req.user._id).populate('friends').exec(callback),
 		groups: callback => Group.find({users: req.user._id}).populate('users').exec(callback),
 		posts: callback => NewPosts.findOne({user: req.user._id}, {posts: {$slice: 10}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}})
-		.populate({path: 'posts', model: 'Post', populate: {path: 'group', model: 'Group'}}).exec(callback),
+		.populate({path: 'posts', model: 'Post', populate: {path: 'group', model: 'Group'}})
+		.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'writer', model: 'User'}}})
+		.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'group', model: 'Group'}}}).exec(callback),
 		invites: callback => Invite.find({receiver: req.user._id}).populate('group').populate('sender').exec(callback)
 	}, (err, results) => {
 		if(err) return next(err);
@@ -46,7 +48,7 @@ exports.groups_create = function(req, res, next) {
 			writer: req.user._id,
 			group: group._id,
 			message: `<${req.user.tag}> started a new Group (${group.name})!`,
-			special: true,
+			special: 'true',
 			files: [],
 			likes: [],
 			dislikes: [],
@@ -72,7 +74,9 @@ exports.groups_create = function(req, res, next) {
 exports.group_get = function(req, res, next) {
 	async.parallel({
 		groups: callback => Group.find({users: req.user._id}).exec(callback),
-		selected: callback => Group.findOne({_id: req.params.id}, {posts: {$slice: 10}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}}).exec(callback),
+		selected: callback => Group.findOne({_id: req.params.id}, {posts: {$slice: 10}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}})
+		.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'writer', model: 'User'}}})
+		.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'group', model: 'Group'}}}).exec(callback),
 		user: callback => User.findById(req.user._id).populate('friends').exec(callback),
 		invites: callback => Invite.find({receiver: req.user._id}).populate('group').populate('sender').exec(callback)
 	}, (err, results) => {
@@ -142,7 +146,11 @@ exports.new_post = [
 			if(req.body.indiv_group === 'true') {
 				async.parallel({
 					groups: callback => Group.find({users: req.user._id}).exec(callback),
-					selected: callback => Group.findOne({_id: req.body.group}, {posts: {$slice: 20}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}}).exec(callback)
+					selected: callback => Group.findOne({_id: req.body.group}, {posts: {$slice: 20}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}})
+					.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'writer', model: 'User'}}})
+					.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'group', model: 'Group'}}}).exec(callback),
+					user: callback => User.findById(req.user._id).populate('friends').exec(callback),
+					invites: callback => Invite.find({receiver: req.user._id}).populate('group').populate('sender').exec(callback)
 					}, (err, results) => {
 					if(err) return next(err);
 					NewPosts.findOne({user: req.user._id}).populate('new_posts').exec((err, newPost) => {
@@ -155,14 +163,18 @@ exports.new_post = [
 					});
 				});
 			} else {
+				//console.log('THERE ARE ERRORS');
 				async.parallel({
 					user: callback => User.findById(req.user._id).populate('friends').exec(callback),
 					groups: callback => Group.find({users: req.user._id}).populate('users').exec(callback),
 					posts: callback => NewPosts.findOne({user: req.user._id}, {posts: {$slice: 10}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}})
-					.populate({path: 'posts', model: 'Post', populate: {path: 'group', model: 'Group'}}).exec(callback)
+					.populate({path: 'posts', model: 'Post', populate: {path: 'group', model: 'Group'}})
+					.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'writer', model: 'User'}}})
+					.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'group', model: 'Group'}}}).exec(callback),
+					invites: callback => Invite.find({receiver: req.user._id}).populate('group').populate('sender').exec(callback)
 				}, (err, results) => {
 					if(err) return next(err);
-					res.render('group_list', {user: results.user, groups: results.groups, posts: results.posts.posts, errors: errors.array(), a1: 'group_list'});
+					res.render('group_list', {user: results.user, groups: results.groups, posts: results.posts.posts, invites: results.invites, errors: errors.array(), a1: 'group_list'});
 				});
 			}
 		} else {
@@ -201,7 +213,9 @@ exports.new_post = [
 
 exports.add_posts = function(req, res, next) {
 	let count = parseInt(req.body.count);
-	Group.findOne({_id: req.params.id}, {posts: {$slice: [count, 10]}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}}).exec((err, group) => {
+	Group.findOne({_id: req.params.id}, {posts: {$slice: [count, 10]}}).populate({path: 'posts', model: 'Post', populate: {path: 'writer', model: 'User'}})
+	.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'writer', model: 'User'}}})
+	.populate({path: 'posts', model: 'Post', populate: {path: 'original', model: 'Post', populate: {path: 'group', model: 'Group'}}}).exec((err, group) => {
 		if(err) return next(err);
 		console.log(group.posts);
 		res.send(group.posts);
@@ -447,4 +461,130 @@ exports.post_reply = function(req, res, next) {
 			res.send(reply);
 		});
 	});
+};
+
+exports.like_reply = function(req, res, next) {
+	Reply.findById(req.body.replyId).exec((err, reply) => {
+		if(err) return next(err);
+		if(reply.dislikes.includes(req.user._id)) {
+			reply.dislikes.splice(reply.dislikes.indexOf(req.user._id), 1);
+		}
+		if(reply.likes.includes(req.user._id)) {
+			reply.likes.splice(reply.likes.indexOf(req.user._id), 1);
+		} else {
+			reply.likes.push(req.user._id);
+		}
+		Reply.findByIdAndUpdate(reply._id, {dislikes: reply.dislikes, likes: reply.likes}, (err, something) => {
+			if(err) return next(err);
+			res.send(reply.likes);
+		});
+	});
+};
+
+exports.dislike_reply = function(req, res, next) {
+	Reply.findById(req.body.replyId).exec((err, reply) => {
+		if(err) return next(err);
+		if(reply.likes.includes(req.user._id)) {
+			reply.likes.splice(reply.likes.indexOf(req.user._id), 1);
+		}
+		if(reply.dislikes.includes(req.user._id)) {
+			reply.dislikes.splice(reply.dislikes.indexOf(req.user._id), 1);
+		} else {
+			reply.dislikes.push(req.user._id);
+		}
+		Reply.findByIdAndUpdate(reply._id, {dislikes: reply.dislikes, likes: reply.likes}, (err, something) => {
+			if(err) return next(err);
+			res.send(reply.dislikes);
+		});
+	});
+};
+
+exports.reply_reply = function(req, res, next) {
+	let files = req.body.filePaths.map((el, i) => {return {path: el, name: req.body.fileNames[i]}});
+	let reply = new Reply({
+		writer: req.user._id,
+		message: req.body.message,
+		replyTo: req.params.id,
+		files: files,
+		images: req.body.images,
+		likes: [],
+		dislikes: [],
+		replies: []
+	});
+	reply.save(err => {
+		if(err) return next(err);
+		Reply.findByIdAndUpdate(req.params.id, {$push: {replies: reply._id}}, (err, something) => {
+			if(err) return next(err);
+			res.send(reply);
+		});
+	});
+};
+
+exports.reply_replies = function(req, res, next) {
+	Reply.findById(req.params.id).populate({path: 'replies', model: 'Reply', populate: {path: 'writer', model: 'User'}}).exec((err, reply) => {
+		if(err) return next(err);
+		reply.replies.sort((a, b) => b.date - a.date);
+		res.send(reply.replies);
+	});
+};
+
+exports.share_post = function(req, res, next) {
+	(new Promise((resolve, reject) => {
+		NewPosts.findOne({user: req.user._id}).exec((err, newposts) => {
+			if(err) return next(err);
+			resolve(newposts);
+		});
+	})).then(newposts => {
+		//console.log(newposts);
+		req.body.groups.forEach(function(groupId) {
+			Group.findById(groupId).populate('users').exec((err, group) => {
+				if(err) return next(err);
+				let post = new Post({
+					writer: req.user._id,
+					group: group._id,
+					message: req.body.message,
+					likes: [],
+					dislikes: [],
+					shares: [],
+					original: req.body.sharePost,
+					replies: []
+				});
+				post.save(err => {
+					if(err) return next(err);
+					group.posts.unshift(post._id);
+					group.users.forEach(function(user) {
+						if(user._id.toString() != req.user._id.toString()) {
+							NewPosts.findOne({user: user._id}).exec((err, result) => {
+								if(err) return next(err);
+								result.posts.unshift(post._id);
+								result.new_posts.unshift(post._id);
+								NewPosts.findOneAndUpdate({user: user._id}, {posts: result.posts, new_posts: result.new_posts}, (err, something) => {
+									if(err) return next(err);
+								});
+							});
+						}
+					});
+					Group.findByIdAndUpdate(group._id, {posts: group.posts}, (err, something) => {
+						if(err) return next(err);
+					});
+				});
+			});
+		});
+		Post.findOneAndUpdate({_id: req.body.sharePost}, {$push: {shares: req.user._id}}, (err, something) => {
+			if(err) return next(err);
+		});
+		let writerPost = new Post({
+			writer: req.user._id,
+			special: 'share',
+			message: 'You shared a post!'
+		});
+		writerPost.save(err => {
+			if(err) return next(err);
+			newposts.posts.unshift(writerPost._id);
+			NewPosts.findOneAndUpdate({_id: newposts._id}, {posts: newposts.posts}, (err, something) => {
+				if(err) return next(err);
+				res.send('Done!');
+			});
+		});
+	}).catch(e => console.log(e))
 };

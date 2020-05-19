@@ -90,6 +90,8 @@ router.get('/groups/:id/members', ensureAuthenticated, GroupController.group_mem
 
 router.get('/groups/:id/replies', ensureAuthenticated, GroupController.post_replies);
 
+router.get('/groups/:id/reply/replies', ensureAuthenticated, GroupController.reply_replies);
+
 //router.get('/groups/:group/:post', ensureAuthenticated, GroupController.post_get);
 
 router.post('/groups/new_post/file_upload', uploadAny.single('upFile'), GroupController.post_file);
@@ -112,7 +114,15 @@ router.post('/groups/like_post', GroupController.like_post);
 
 router.post('/groups/dislike_post', GroupController.dislike_post);
 
+router.post('/groups/like_reply', GroupController.like_reply);
+
+router.post('/groups/dislike_reply', GroupController.dislike_reply);
+
+router.post('/groups/share_post', GroupController.share_post);
+
 router.post('/groups/:id/post_reply', GroupController.post_reply);
+
+router.post('/groups/:id/reply_reply', GroupController.reply_reply);
 
 router.post('/groups/:id', GroupController.add_posts);
 

@@ -61,7 +61,7 @@
 						<span id="close-sidebar"><i class="fas fa-chevron-right"></i></span>
 						<span id="open-sidebar" class="d-none"><i class="fas fa-chevron-left"></i></span>
 					</button>-->
-					<div id="create-group-div" class="<%= typeof errors != 'undefined' ? '' : 'd-none' %>">
+					<div id="create-group-div" class="<%= typeof errors2 != 'undefined' ? '' : 'd-none' %>">
 						<div class="card card-body">
 							<h1 class="text-center card-title">New Group</h1>
 							<form method="POST" action="/chats/groups/new_group">
@@ -105,7 +105,17 @@
 						</div>
 					</div>
 					<div id="all-posts">
-						<div class="card card-body d-none" id="new-post-div">
+						<div class="card card-body <%= typeof errors != 'undefined' ? '' : 'd-none' %>" id="new-post-div">
+							<% if(typeof errors != 'undefined') { %>
+								<% errors.forEach(function(error) { %>
+									<div class="alert alert-warning alert-dismissible fade show" role="alert">
+										<%= error.msg %>
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								<% }); %>
+							<% } %>
 							<form method="POST" action="/chats/groups/new_post">
 								<div class="form-group">
 									<input type="text" name="title" class="form-control" placeholder="Optional title">
@@ -153,7 +163,7 @@
 								<input type="hidden" name="indiv_group" value="true">
 							</form>
 						</div>
-						<div class="card d-none" id="post-template">
+						<div class="card d-none mb-2" id="post-template">
 							<input type="hidden" class="postId">
 							<input type="hidden" class="postGroupId">
 							<div class="card-header pb-0">
@@ -200,21 +210,120 @@
 									<button type="button" class="btn text-dark reply-info">
 										<span class="icon"><i class="far fa-comment-dots"></i> </span><span class="number"></span>
 									</button>
-									<button type="button" class="btn text-dark share-info">
-										<span class="icon"><i class="fas fa-share-square"></i> </span></span><span class="number"></span>
+									<button type="button" class="btn text-dark share-info" data-toggle="modal" data-target="#shareModal">
+										<span class="icon"><i class="fas fa-share-square"></i> </span><span class="number"></span>
 									</button>
 									<button type="button" class="btn text-dark like-info">
-										<span class="icon"><i class="fas fa-thumbs-up"></i> </span></span><span class="number"></span>
+										<span class="icon"><i class="fas fa-thumbs-up"></i> </span><span class="number"></span>
 									</button>
 									<button type="button" class="btn text-dark dislike-info">
-										<span class="icon"><i class="fas fa-thumbs-down"></i> </span></span><span class="number"></span>
+										<span class="icon"><i class="fas fa-thumbs-down"></i> </span><span class="number"></span>
 									</button>
 								</div>
 							</div>
 						</div>
 						<div id="post-list">
 							<% posts.forEach(function(post) { %>
-								<div class="card mb-2">
+								<% if(post.original) { %>
+									<div class="card mb-2" id="<%= post._id %>">
+										<input type="hidden" class="postId" value="<%= post._id %>">
+										<input type="hidden" class="postGroupId" value="<%= post.group._id %>">
+										<div class="card-header pb-0">
+											<div class="row">
+												<div class="col-2">
+													<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+														<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= post.writer.picture || '/images/blank_profile.png' %>">
+													</div>
+												</div>
+												<div class="col-10 pt-1">
+													<div class="row no-gutters">
+														<div class="col-8">
+															<h4 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark"><%= post.writer._id.toString() === user._id.toString() ? 'You' : post.writer.name %></a></h4>
+															<h6 class="overflow-ellipsis"><a href="/users/<%= post.writer._id %>/profile" class="text-dark">&lt;<%= post.writer.tag %>&gt;</a></h6>
+														</div>
+														<div class="col-4">
+															<p><%= post.date_relative %></p>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-10 mx-auto post-content">
+													<p><%= post.message %></p>
+												</div>
+											</div>
+										</div>
+										<div class="card-body pt-0 pl-3">
+											<div class="card mb-2">
+												<input type="hidden" class="originalPostId" value="<%= post.original._id %>">
+												<input type="hidden" class="originalPostGroupId" value="<%= post.original.group._id %>">
+												<div class="card-header pb-0">
+													<div class="row">
+														<div class="col-2">
+															<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+																<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= post.original.writer.picture || '/images/blank_profile.png' %>">
+															</div>
+														</div>
+														<div class="col-10 pt-1">
+															<div class="row no-gutters">
+																<div class="col-8">
+																	<h4 class="overflow-ellipsis"><a href="/users/<%= post.original.writer._id %>/profile" class="text-dark"><%= post.original.writer._id.toString() === user._id.toString() ? 'You' : post.original.writer.name %></a></h4>
+																	<h6 class="overflow-ellipsis"><a href="/users/<%= post.original.writer._id %>/profile" class="text-dark">&lt;<%= post.original.writer.tag %>&gt;</a></h6>
+																</div>
+																<div class="col-4">
+																	<p><%= post.original.date_relative %></p>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="card-body pt-0">
+													<% console.log(post.original) %>
+													<% if(post.original.title) { %>
+														<div class="w-100"><h5 class="text-center overflow-ellipsis share-content" style="line-height:2rem"><%= post.original.title %></h5></div>
+													<% } %>
+													<div class="row">
+														<div class="col-11 mx-auto post-message share-content">
+															<%= post.original.message %>
+														</div>
+														<input type="hidden" value="unedited">
+													</div>
+													<div class="row no-gutters">
+														<div class="w-100 d-flex flex-wrap">
+															<% post.original.images.forEach(function(image) { %>
+																<a href="<%= image %>"><img style="max-height:200px" src="<%= image %>"></a>
+															<% }); %>
+														</div>
+													</div>
+													<ul class="list-group">
+														<% post.original.files.forEach(function(file) { %>
+															<li class="list-group-item">
+																<a href="<%= file.path %>"><%= file.name %></a>
+															</li>
+														<% }); %>
+													</ul>
+												</div>
+											</div>
+										</div>
+										<div class="card-footer p-0">
+											<div class="d-flex justify-content-around">
+												<button type="button" class="btn text-dark reply-info">
+													<span><i class="far fa-comment-dots"></i> </span><%= post.replies.length %>
+												</button>
+												<button type="button" class="btn text-dark share-info" data-toggle="modal" data-target="#shareModal">
+													<span class="<%= post.shares.includes(user._id) ? 'text-success' : '' %> icon"><i class="fas fa-share-square"></i> </span><span class="number"><%= post.shares.length %></span>
+												</button>
+												<button type="button" class="btn text-dark like-info">
+													<span class="<%= post.likes.includes(user._id) ? 'text-success' : '' %> icon"><i class="fas fa-thumbs-up"></i> </span><span class="number"><%= post.likes.length %></span>
+												</button>
+												<button type="button" class="btn text-dark dislike-info">
+													<span class="<%= post.dislikes.includes(user._id) ? 'text-danger' : '' %> icon"><i class="fas fa-thumbs-down"></i> </span><span class="number"><%= post.dislikes.length %></span>
+												</button>
+											</div>
+										</div>
+									</div>
+								<% return; } %>
+								<div class="card mb-2" id="<%= post._id %>">
 									<input type="hidden" class="postId" value="<%= post._id %>">
 									<input type="hidden" class="postGroupId" value="<%= post.group._id %>">
 									<div class="card-header pb-0">
@@ -267,7 +376,7 @@
 											<button type="button" class="btn text-dark reply-info">
 												<span><i class="far fa-comment-dots"></i> </span><%= post.replies.length %>
 											</button>
-											<button type="button" class="btn text-dark share-info">
+											<button type="button" class="btn text-dark share-info" data-toggle="modal" data-target="#shareModal">
 												<span class="<%= post.shares.includes(user._id) ? 'text-success' : '' %> icon"><i class="fas fa-share-square"></i> </span><span class="number"><%= post.shares.length %></span>
 											</button>
 											<button type="button" class="btn text-dark like-info">
@@ -378,18 +487,32 @@
 
 <div class="hidden">
 	<div class="media" id="reply-template">
-		<div class="rounded-circle overflow-hidden" style="width:1rem;height:1rem">
-			<img style="min-width:100%;min-height:100%">
+		<div class="rounded-circle overflow-hidden mx-3 mb-3" style="width:2rem;height:2rem">
+			<img class="img-fluid" style="min-width:100%;min-height:100%">
 		</div>
 		<div class="media-body">
 			<div class="overflow-ellipsis reply-heading"><h6 class="d-inline"></h6><h6 class="font-weight-normal d-inline"></h6></div>
-			<div class="reply-message"></div>
+			<div class="reply-message reply-content"></div>
 			<div class="row no-gutters">
 				<div class="w-100 d-flex flex-wrap reply-images">
 				</div>
 			</div>
 			<ul class="list-group reply-file-list">
 			</ul>
+			<div class="card-footer p-0 border-0">
+				<div class="d-flex justify-content-around">
+					<button type="button" class="btn text-dark reply-reply-info">
+						<span class="icon"><i class="far fa-comment-dots"></i> </span></span><span class="number"></span>
+					</button>
+					<button type="button" class="btn text-dark reply-like-info">
+						<span class="icon"><i class="fas fa-thumbs-up"></i> </span></span><span class="number"></span>
+					</button>
+					<button type="button" class="btn text-dark reply-dislike-info">
+						<span class="icon"><i class="fas fa-thumbs-down"></i> </span></span><span class="number"></span>
+					</button>
+				</div>
+				<input type="hidden" class="replyId">
+			</div>
 		</div>
 	</div>
 </div>
@@ -472,4 +595,139 @@
 			</div>
 		</div>
 	</form>
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Select Groups to Share To!</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<ul class="list-group">
+					<% groups.forEach(function(group) { %>
+						<button type="button" class="list-group-item list-group-item-action pb-0 btn border-light share-group-select" style="border-width:3px">
+							<div class="row no-gutters">
+								<div class="col-2">
+									<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+										<img class="img-fluid" style="min-height:100%;min-width:100%" src="<%= group.picture %>">
+									</div>
+								</div>
+								<div class="col-10 pl-3">
+									<h4 class="mb-0"><%= group.name %> <span class="badge badge-info"></span></h4>
+									<p><%= group.users.length %> Members</p>
+								</div>
+							</div>
+							<input type="checkbox" value="<%= group._id %>" class="hidden share-group-input" name="share_group">
+						</button>
+					<% }); %>
+				</ul>
+			</div>
+			<input type="hidden" id="sharePostId">
+			<div class="modal-footer d-flex justify-content-around">
+				<div class="w-75 mx-auto">
+					<textarea id="share-message" rows="2" class="w-100" placeholder="Optional message"></textarea>
+				</div>
+				<div class="w-100 d-flex justify-content-around">
+					<button type="submit" class="btn btn-success" id="share-btn">Share</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card mb-2 hidden" id="post-original-template">
+	<input type="hidden" class="postId">
+	<input type="hidden" class="postGroupId">
+	<div class="card-header pb-0">
+		<div class="row">
+			<div class="col-2">
+				<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+					<img class="img-fluid" style="min-height:100%;min-width:100%">
+				</div>
+			</div>
+			<div class="col-10 pt-1">
+				<div class="row no-gutters">
+					<div class="col-8">
+						<h4 class="overflow-ellipsis writer-name"><a class="text-dark"></a></h4>
+						<h6 class="overflow-ellipsis"><a class="text-dark"></a></h6>
+					</div>
+					<div class="col-4">
+						<p class="post-date"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-10 mx-auto post-content">
+				<p class="post-message"></p>
+				<input type="hidden" value="unedited">
+			</div>
+		</div>
+	</div>
+	<div class="card-body pt-0 pl-3">
+		<div class="card mb-2">
+			<input type="hidden" class="originalPostId" >
+			<input type="hidden" class="originalPostGroupId">
+			<div class="card-header pb-0">
+				<div class="row">
+					<div class="col-2">
+						<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+							<img class="img-fluid" style="min-height:100%;min-width:100%">
+						</div>
+					</div>
+					<div class="col-10 pt-1">
+						<div class="row no-gutters">
+							<div class="col-8">
+								<h4 class="overflow-ellipsis writer-name"><a class="text-dark"></a></h4>
+								<h6 class="overflow-ellipsis"><a class="text-dark"></a></h6>
+							</div>
+							<div class="col-4">
+								<p class="post-date"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card-body pt-0">
+			
+					<div class="w-100 share-content"><h5 class="text-center overflow-ellipsis post-title" style="line-height:2rem"></h5></div>
+				
+				<div class="row">
+					<div class="col-11 mx-auto post-message share-content">
+						
+					</div>
+					<input type="hidden" value="unedited">
+				</div>
+				<div class="row no-gutters">
+					<div class="w-100 d-flex flex-wrap">
+						
+					</div>
+				</div>
+				<ul class="list-group">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="card-footer p-0">
+		<div class="d-flex justify-content-around">
+			<button type="button" class="btn text-dark reply-info">
+				<span><i class="far fa-comment-dots"></i> </span><span class="number"></span>
+			</button>
+			<button type="button" class="btn text-dark share-info" data-toggle="modal" data-target="#shareModal">
+				<span class="icon"><i class="fas fa-share-square"></i> </span><span class="number"></span>
+			</button>
+			<button type="button" class="btn text-dark like-info">
+				<span class="icon"><i class="fas fa-thumbs-up"></i> </span><span class="number"></span>
+			</button>
+			<button type="button" class="btn text-dark dislike-info">
+				<span class="icon"><i class="fas fa-thumbs-down"></i> </span><span class="number"></span>
+			</button>
+		</div>
+	</div>
 </div>

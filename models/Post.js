@@ -4,11 +4,11 @@ const moment = require('moment');
 
 PostSchema = new Schema({
 	writer: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-	group: {type: Schema.Types.ObjectId, ref: 'Group', required: true},
+	group: {type: Schema.Types.ObjectId, ref: 'Group'},
 	date: {type: Date, default: Date.now()},
 	message: {type: String},
 	title: {type: String},
-	special: {type: Boolean, default: false},
+	special: {type: String, default: 'false'},
 	files: [{name: {type: String}, path: {type: String}}],
 	images: [{type: String}],
 	likes: [{type: Schema.Types.ObjectId, ref: 'User'}],
