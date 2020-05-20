@@ -1,0 +1,42 @@
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<div class="container" style="background:rgba(191,172,172,.5);min-height:100vh">
+			<div class="row bg-primary pt-5">
+				<div class="text-center col-12"><h1 class="display-3 text-light">Invites</h1></div>
+			</div>
+			<div class="row mt-3">
+				<% if(invites.length == 0) { %>
+					<p>You have no invites currently%>
+				<% } else { %>
+					<% invites.forEach(function(invite) { %>
+						<div class="col-xl-3 col-lg-4 col-sm-6">
+							<div class="card">
+								<div class="friend_pic_div overflow-hidden rounded-circle mx-auto">
+									<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= invite.group.picture || '/images/oort-cloud.jpg' %>">
+								</div>
+								<div class="card-body pb-0">
+									<h3 class="card-title text-center overflow-hidden"><%= invite.group.name %></h3>
+								</div>
+								<hr class="mt-0">
+								<div class="pl-3">
+									From <a href="/users/<%= invite.sender._id %>/profile">&lt;<%= invite.sender.tag %>&gt;</a>
+								</div>
+								<div class="pl-3">
+									<p><%= invite.message %></p>
+								</div>
+								<div class="w-100 d-flex justify-content-around">
+									<button type="button" class="btn btn-success accept-invite-btn">Accept</button>
+									<button type="button" class="btn btn-danger decline-invite-btn">Decline</button>
+									<input type="hidden" class="inviteGroupId" value="<%= invite.group._id %>">
+									<input type="hidden" class="inviteId" value="<%= invite._id %>">
+								</div>
+							</div>
+						</div>
+					<% }); %>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</div>

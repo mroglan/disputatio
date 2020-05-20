@@ -8,6 +8,8 @@ const fs = require('fs');
 const User = require('../models/User');
 const Contact = require('../models/Contact');
 const NewPosts = require('../models/NewPosts');
+const Invite = require('../models/Invite');
+const Group = require('../models/Group');
 
 const {check, validationResult} = require('express-validator');
 const {sanitizeBody} = require('express-validator/filter');
@@ -451,4 +453,18 @@ exports.find_user = function(req, res, next) {
 			res.redirect(`/users/${user._id}/profile`);
 		}
 	});
-}
+};
+
+exports.get_invites = function(req, res, next) {
+	Invite.find({receiver: req.user._id}).populate('sender').populate('group').exec((err, invites) => {
+		if(err) return next(err);
+		res.render('invite_list', {user: req.user, invites: invites, a1: 'invite_list'});
+	});
+};
+
+exports.all_groups = function(req, res, next) {
+	Group.find({users: req.user._id}).exec((err, groups) => {
+		if(err) return next(err);
+		res.render('all_groups', {user: req.user, groups: groups, a1: 'all_groups'});
+	});
+};

@@ -1,7 +1,7 @@
 $(() => {
 	
 	conversationNotifications();
-	
+	groupNotifications();
 });
 
 function conversationNotifications() {
@@ -16,6 +16,21 @@ function conversationNotifications() {
 		},
 		complete: function(data) {
 			setTimeout(conversationNotifications, 5000);
+		}
+	});
+}
+
+function groupNotifications() {
+	$.ajax({
+		url: '/chats/side_notifications/groups',
+		type: 'POST',
+		success: function(data) {
+			if(data != '0') {
+				$('#side-groups .badge').text(data);
+			}
+		},
+		complete: function(data) {
+			setTimeout(groupNotifications, 5000);
 		}
 	});
 }

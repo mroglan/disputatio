@@ -53,6 +53,9 @@ router.post('/side_notifications/convos', ensureAuthenticated, NotificationContr
 
 router.post('/conversations/notifications', NotificationController.convo_list);
 
+router.post('/side_notifications/groups', ensureAuthenticated, NotificationController.side_groups);
+
+router.post('/groups/notifications', NotificationController.group_list);
 
 //Conversations
 
@@ -92,6 +95,8 @@ router.get('/groups/:id/replies', ensureAuthenticated, GroupController.post_repl
 
 router.get('/groups/:id/reply/replies', ensureAuthenticated, GroupController.reply_replies);
 
+router.get('/groups/:id/edit', ensureAuthenticated, GroupController.edit_group);
+
 //router.get('/groups/:group/:post', ensureAuthenticated, GroupController.post_get);
 
 router.post('/groups/new_post/file_upload', uploadAny.single('upFile'), GroupController.post_file);
@@ -120,9 +125,13 @@ router.post('/groups/dislike_reply', GroupController.dislike_reply);
 
 router.post('/groups/share_post', GroupController.share_post);
 
+router.post('/groups/code_entry', GroupController.check_code);
+
 router.post('/groups/:id/post_reply', GroupController.post_reply);
 
 router.post('/groups/:id/reply_reply', GroupController.reply_reply);
+
+router.post('/groups/:id/edit', GroupController.update_group);
 
 router.post('/groups/:id', GroupController.add_posts);
 

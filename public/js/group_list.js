@@ -589,6 +589,47 @@ $(() => {
 		}
 	});
 	
+	checkSidebar();
+	
+	$('.accept-invite-btn2').click(function() {
+		let acceptButton = $(this);
+		console.log($('#selectedId').val());
+		$.ajax({
+			url: '/chats/groups/accept_invite',
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({'group': $('#selectedId').val(), 'inviteId': acceptButton.next().val()}),
+			success: function(data) {
+				window.location.reload(true);
+			}
+		});
+	});
+	
+	$('#status').change(function() {
+		if($(this).val() === 'closed' || $(this).val() === 'invite_only') {
+			$('#closed-code').removeClass('d-none');
+		} else {
+			$('#closed-code').addClass('d-none');
+		}
+	});
+	
+	$('#code-input-btn').click(function() {
+		let footer = $(this).closest('.modal-footer');
+		$.ajax({
+			url: '/chats/groups/code_entry',
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({'code': $('#code-input').val(), 'group': $('#selectedId').val()}),
+			success: function(data) {
+				if(data === 'negative') {
+					footer.append('<div class="w-100">Code Incorrect!</div>');
+				} else {
+					window.location.reload(true);
+				}
+			}
+		});
+	});
+	
 	$.ajax({
 		url: '/chats/groups/find_recommended_groups',
 		type: 'GET',
@@ -598,6 +639,9 @@ $(() => {
 				$('#recommended-list').children().last().removeAttr('id').attr('href', `/chats/groups/${group._id}`)
 				.find('img').attr('src', group.picture || '/images/oort-cloud.jpg').closest('a').find('h6').text(group.name);
 			});
+			if(data.length === 0) {
+				$('#recommended-list').append('<div class="px-3">You have no recommended groups currently!</div>');
+			}
 			sizeProfilePicDiv();
 		}
 	});
@@ -693,6 +737,24 @@ function loadReplyReplies(replyId) {
 				.find('.replyId').val(reply._id);
 			});
 			editPosts();
+		}
+	});
+}
+
+function checkSidebar() {
+	$.ajax({
+		url: '/chats/groups/notifications',
+		type: 'POST',
+		success: function(data) {
+			console.log(data);
+			data.forEach(function(group) {
+				if(group.posts.length === 0) return;
+				console.log($(`#link-${group.id}`));
+				$(`#link-${group.id}`).find('.badge').text(group.posts.length);
+			});
+		},
+		complete: function(data) {
+			setTimeout(checkSidebar, 5000);
 		}
 	});
 }

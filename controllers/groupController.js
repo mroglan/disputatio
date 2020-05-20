@@ -40,6 +40,7 @@ exports.groups_create = function(req, res, next) {
 		status: req.body.status,
 		description: req.body.description,
 		picture: req.body.picture_path,
+		code: req.body.code,
 		posts: []
 	});
 	group.save(err => {
@@ -86,7 +87,7 @@ exports.group_get = function(req, res, next) {
 			let newPostArray = newPost.new_posts.filter(post => post.group.toString() != req.params.id);
 			NewPosts.findByIdAndUpdate(newPost._id, {new_posts: newPostArray}, (err, something) => {
 				if(err) return next(err);
-				res.render('group', {user: results.user, selected: results.selected, posts: results.selected.posts, groups: results.groups, a1: 'group'});
+				res.render('group', {user: results.user, selected: results.selected, posts: results.selected.posts, invites: results.invites, groups: results.groups, a1: 'group'});
 			});
 		});
 	});
@@ -285,7 +286,8 @@ exports.find_recommended_groups = function(req, res, next) {
 		let recGroupArray = [];
 		groups.forEach(function(group) {
 			req.user.friends.forEach(function(friend) {
-				if(!(group.users.includes(req.user._id)) && group.users.includes(friend) && !(recGroupArray.includes(group))) {
+				if(!(group.users.includes(req.user._id)) && group.users.includes(friend) && !(recGroupArray.includes(group)) && group.status != 'closed') {
+					console.log(`-----------${group.status}---------`);
 					recGroupArray.push(group);
 				}
 			});
@@ -297,6 +299,10 @@ exports.find_recommended_groups = function(req, res, next) {
 exports.group_members = function(req, res, next) {
 	Group.findById(req.params.id).populate('users').exec((err, group) => {
 		if(err) return next(err);
+		if(!(group.users.includes(req.user._id)) && group.status === 'closed') {
+			res.send('You are not a member of this closed group.');
+			return;
+		}
 		res.render('group_members', {user: req.user, group: group, a1: 'group_members'});
 	});
 };
@@ -587,4 +593,42 @@ exports.share_post = function(req, res, next) {
 			});
 		});
 	}).catch(e => console.log(e))
+};
+
+exports.check_code = function(req, res, next) {
+	Group.findById(req.body.group).exec((err, group) => {
+		if(err) return next(err);
+		if(group.code != req.body.code) {
+			res.send('negative');
+			return;
+		}
+		Group.findOneAndUpdate({_id: group._id}, {$push: {users: req.user._id}}, (err, something) => {
+			if(err) return next(err);
+			res.send('positive');
+		});
+	});
+};
+
+exports.edit_group = function(req, res, next) {
+	Group.findById(req.params.id).populate('users').exec((err, group) => {
+		if(err) return next(err);
+		if(group.start_user.toString() != req.user._id.toString()) {
+			res.send("You cannot edit a group you didn't start!");
+			return;
+		}
+		res.render('edit_group', {user: req.user, group: group, a1: 'edit_group'});
+	});
+};
+
+exports.update_group = function(req, res, next) {
+	Group.findOneAndUpdate({_id: req.params.id}, {
+		name: req.body.name,
+		description: req.body.description,
+		status: req.body.status,
+		picture: req.body.picture_path,
+		code: req.body.code
+	}, (err, something) => {
+		if(err) return next(err);
+		res.redirect(something.url);
+	});
 };

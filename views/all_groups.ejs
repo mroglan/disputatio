@@ -1,0 +1,31 @@
+<div class="d-flex" id="wrapper">
+	<%- include('./partials/side_nav.ejs') %>
+	<div id="page-content-wrapper">
+		<%- include('./partials/top_nav.ejs') %>
+		<div class="container" style="background:rgba(191,172,172,.5);min-height:100vh">
+			<div class="row bg-primary pt-5">
+				<div class="text-center col-12"><h1 class="display-3 text-light">Your Groups</h1></div>
+			</div>
+			<div class="row mt-3">
+				<% if(groups.length == 0) { %>
+					<p>You have no groups currently%>
+				<% } else { %>
+					<% groups.forEach(function(group) { %>
+						<div class="col-xl-3 col-lg-4 col-sm-6 my-3">
+							<a href="<%= group.url %>" style="text-decoration:none">
+								<div class="card">
+									<div class="friend_pic_div overflow-hidden rounded-circle mx-auto">
+										<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= group.picture || '/images/oort-cloud.jpg' %>">
+									</div>
+									<div class="card-body pb-0">
+										<h3 class="card-title text-center overflow-hidden"><%= group.name %></h3>
+									</div>
+								</div>
+							</a>
+						</div>
+					<% }); %>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</div>

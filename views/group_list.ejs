@@ -45,7 +45,7 @@
 						</div>
 						<div class="list-group overflow-auto pt-3" style="max-height:700px">
 							<% groups.forEach(function(group) { %>
-								<a href="<%= group.url %>" class="list-group-item list-group-item-action position-relative">
+								<a id="link-<%= group._id %>" href="<%= group.url %>" class="list-group-item list-group-item-action position-relative">
 									<div class="row no-gutters">
 										<div class="col-2">
 											<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
@@ -53,7 +53,7 @@
 											</div>
 										</div>
 										<div class="col-10 pl-3 pt-2">
-											<h6><%= group.name %></h6>
+											<h6><%= group.name %> <span class="badge badge-info"></span></h6>
 										</div>
 									</div>
 								</a>
@@ -80,6 +80,12 @@
 											<option value="invite_only">Invite Only</option>
 											<option value="closed">Closed</option>
 										</select>
+									</div>
+								</div>
+								<div class="form-group row no-gutters d-none" id="closed-code">
+									<label class="col-lg-4 col-form-label" for="code">Group Entry Code: </label>
+									<div class="col-lg-8 pl-3">
+										<input type="text" class="form-control" id="code" name="code" placeholder="you shall not pass">
 									</div>
 								</div>
 								<div class="form-group row no-gutters">
@@ -423,7 +429,7 @@
 							<h6 class="card-title text-center">Recommended Groups</h6>
 						</div>
 						<div class="card-body p-0">
-							<div id="recommended-list" class="list-group overflow-auto" style="max-height:500px">
+							<div id="recommended-list" class="list-group overflow-auto" style="max-height:400px">
 							</div>
 						</div>
 					</div>
@@ -438,7 +444,7 @@
 									<% invites.forEach(function(invite, index) { %>
 										<div class="carousel-item <%= index === 0 ? 'active' : '' %>">
 											<div class="w-25 mx-auto rounded-circle profile-pic-div overflow-hidden">
-												<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= invite.group.picture %>">
+												<img class="img-fluid" style="min-width:100%;min-height:100%" src="<%= invite.group.picture ? invite.group.picture : '/images/oort-cloud.jpg' %>">
 											</div>
 											<div class="text-center w-75 mx-auto">
 												<h6><a href="<%= invite.group.url %>" class="text-dark"><%= invite.group.name %></a></h6>

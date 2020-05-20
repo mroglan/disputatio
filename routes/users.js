@@ -56,6 +56,10 @@ router.get('/profile/find/:tag', ensureAuthenticated, UserController.find_user);
 
 router.get('/profile/not_found', ensureAuthenticated, (req, res) => res.send('Profile not found!'));
 
+router.get('/profile/invites', ensureAuthenticated, UserController.get_invites);
+
+router.get('/profile/groups', ensureAuthenticated, UserController.all_groups);
+
 router.get('/:id/profile', ensureAuthenticated, UserController.other_profile_get);
 
 router.get('/:id/followers', ensureAuthenticated, UserController.other_followers_get);
