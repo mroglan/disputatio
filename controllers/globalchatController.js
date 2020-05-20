@@ -46,6 +46,9 @@ exports.get_messages = function(req, res, next) {
 		let resultArray = result.messages.map(message => {
 			return {id: message.writer._id, tag: message.writer.tag, msg: message.message};
 		});
-		res.send(resultArray);
+		GlobalMessages.findOneAndUpdate({user: req.user._id}, {messages: []}, (err, something) => {
+			if(err) return next(err);
+			res.send(resultArray);
+		});
 	});
 };

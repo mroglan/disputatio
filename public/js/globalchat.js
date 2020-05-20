@@ -35,6 +35,7 @@ function checkEnter(e) {
 }
 
 function checkForMessages() {
+	let d = $('.content');
 	$.ajax({
 		url: `/chats/globalchat/get_messages`,
 		type: 'GET',
