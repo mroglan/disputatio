@@ -41,7 +41,7 @@ exports.new_message = function(req, res, next) {
 };
 
 exports.get_messages = function(req, res, next) {
-	GlobalMessages.findOne({user: req.user._id}).populate('writer').exec((err, result) => {
+	GlobalMessages.findOne({user: req.user._id}).populate({path: 'messages', model: 'Message', populate: {path: 'writer', model: 'User'}}).exec((err, result) => {
 		if(err) return next(err);
 		let resultArray = result.messages.map(message => {
 			return {id: message.writer._id, tag: message.writer.tag, msg: message.message};
