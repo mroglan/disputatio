@@ -396,7 +396,7 @@
 										</div>
 									</div>
 								<% }); %>
-							<% } if(selected.status === 'closed') { %>
+							<% } if(selected.status === 'closed' && !(selected.users.includes(user._id))) { %>
 								<div>You must be a member of this group to see any posts</div>
 							<% } %>
 						</div>

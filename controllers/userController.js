@@ -10,6 +10,7 @@ const Contact = require('../models/Contact');
 const NewPosts = require('../models/NewPosts');
 const Invite = require('../models/Invite');
 const Group = require('../models/Group');
+const GlobalMessages = require('../models/GlobalMessages');
 
 const {check, validationResult} = require('express-validator');
 const {sanitizeBody} = require('express-validator/filter');
@@ -82,6 +83,13 @@ exports.register_post = [
 										new_posts: []
 									});
 									newPosts.save(err => {
+										if(err) return next(err);
+									});
+									const globalMessages = new GlobalMessages({
+										user: newUser._id,
+										messages: []
+									});
+									globalMessages.save(err => {
 										if(err) return next(err);
 									});
 									req.flash('success_msg', 'You are now registered and can log in');

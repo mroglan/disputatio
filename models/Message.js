@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const moment = require('moment')
+const moment = require('moment');
 
 const MessageSchema = new Schema({
 	writer: {type: Schema.Types.ObjectId, ref: 'User'},
@@ -8,7 +8,8 @@ const MessageSchema = new Schema({
 	message: {type: String},
 	files: [{fileType: {type: String}, location: {type: String}}],
 	date: {type: Date, default: Date.now()},
-	special: {type: Boolean, default: false}
+	special: {type: Boolean, default: false},
+	globalChat: {type: Boolean, default: false}
 });
 
 MessageSchema.virtual('date_format').get(function() {

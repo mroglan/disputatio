@@ -46,6 +46,7 @@ var uploadAny = multer({
 const ConvoController = require('../controllers/convoController');
 const NotificationController = require('../controllers/notificationController');
 const GroupController = require('../controllers/groupController');
+const GlobalchatController = require('../controllers/globalchatController');
 
 
 //Notifications
@@ -57,8 +58,8 @@ router.post('/side_notifications/groups', ensureAuthenticated, NotificationContr
 
 router.post('/groups/notifications', NotificationController.group_list);
 
-//Conversations
 
+//Conversations
 router.get('/conversations', ensureAuthenticated, ConvoController.conversations_get);
 
 router.post('/conversations/new', ConvoController.conversations_create);
@@ -136,5 +137,13 @@ router.post('/groups/:id/edit', GroupController.update_group);
 router.post('/groups/:id', GroupController.add_posts);
 
 router.post('/groups', GroupController.add_general_posts);
+
+
+//Global Chat
+router.get('/globalchat', ensureAuthenticated, GlobalchatController.get_globalchat);
+
+router.get('/globalchat/get_messages', ensureAuthenticated, GlobalchatController.get_messages);
+
+router.post('/globalchat/new_message', GlobalchatController.new_message);
 
 module.exports = router;
