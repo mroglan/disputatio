@@ -18,9 +18,7 @@ $(() => {
 					</div>
 				</div>`);
 				$('#message').val('');
-				if( d.scrollTop === (d.scrollHeight - d.offsetHeight)) {
-					d.scrollTop(d.prop('scrollHeight'));
-				}
+				d.scrollTop(d.prop('scrollHeight'));
 			}
 		});
 	});
@@ -173,9 +171,7 @@ function checkForMessages() {
 						</div>
 					</div>`)
 				});
-				if(data.length > 0 && d.scrollTop === (d.scrollHeight - d.offsetHeight)) {
-					d.scrollTop(d.prop('scrollHeight'));
-				}
+				d.scrollTop(d.prop('scrollHeight'));
 			} else {
 				console.log(data);
 			}
