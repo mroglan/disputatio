@@ -70,7 +70,7 @@ $(() => {
 					content.scrollTop(content.prop('scrollHeight'));
 				} else {
 					$('#convo-id').val('none');
-					$('#additional-info').children().last().find('.card-body').append(`<button type="button" class="btn btn-success create-convo">Start Conversation</button>`);
+					//$('#additional-info').children().last().find('.card-body').append(`<button type="button" class="btn btn-success create-convo">Start Conversation</button>`);
 				}
 			}
 		});
@@ -98,7 +98,7 @@ $(() => {
 		$(this).after($('#new-convo'));
 		$(this).remove();
 	}).delegate('#send-msg-btn2', 'click', function() {
-		console.log($('#message2').val());
+		console.log($('#convo-id').val());
 		$.ajax({
 			url: `/chats/conversations/${$('#convo-id').val()}`,
 			type: 'POST',
@@ -124,6 +124,7 @@ $(() => {
 			contentType: 'application/json',
 			data: JSON.stringify({'convo_user': userInfoId, 'name': $('#new-convo-name').val(), 'globalchat': 'yes'}),
 			success: function(data) {
+				console.log('chat added!');
 				$('#convo-id').val(data.id);
 				$('#additional-info').children().last().find('.card-body').append($('#convo-template').clone());
 				let content = $('#additional-info').children().last().find('.card-body').find('.content');
@@ -190,6 +191,7 @@ function checkForChatMessages() {
 		setTimeout(checkForChatMessages, 5000);
 		return;
 	}
+	console.log(chatId);
 	$.ajax({
 		url: `/chats/conversations/${chatId}/get_messages`,
 		type: 'POST',
