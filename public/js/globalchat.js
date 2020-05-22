@@ -156,11 +156,12 @@ function checkEnter2(e) {
 }
 
 function checkForMessages() {
-	let d = $('.content');
+	let d = $('#content');
 	$.ajax({
 		url: `/chats/globalchat/get_messages`,
 		type: 'GET',
 		success: function(data) {
+			console.log(data);
 			if(Array.isArray(data)) {
 				data.forEach(function(message) {
 					$('.content').append(`<div class="float-left message mb-2">
