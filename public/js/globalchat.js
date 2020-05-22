@@ -164,7 +164,7 @@ function checkForMessages() {
 			console.log(data);
 			if(Array.isArray(data)) {
 				data.forEach(function(message) {
-					$('.content').append(`<div class="float-left message mb-2">
+					$('#content').append(`<div class="float-left message mb-2">
 						<small>
 							<a href="#additional-info" data-id=${message.id} class="text-info">&lt;${message.tag}&gt;</a>
 						</small>
