@@ -144,6 +144,8 @@ router.get('/globalchat', ensureAuthenticated, GlobalchatController.get_globalch
 
 router.get('/globalchat/get_messages', ensureAuthenticated, GlobalchatController.get_messages);
 
+router.get('/globalchat/user_info/:id', ensureAuthenticated, GlobalchatController.get_user_info);
+
 router.post('/globalchat/new_message', GlobalchatController.new_message);
 
 module.exports = router;

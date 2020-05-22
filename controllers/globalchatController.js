@@ -4,6 +4,7 @@ const async = require('async');
 const GlobalMessages = require('../models/GlobalMessages');
 const Message = require('../models/Message');
 const User = require('../models/User');
+const Convo = require('../models/Conversation');
 
 const {check, validationResult} = require('express-validator');
 const {sanitizeBody} = require('express-validator/filter');
@@ -50,5 +51,16 @@ exports.get_messages = function(req, res, next) {
 			if(err) return next(err);
 			res.send(resultArray);
 		});
+	});
+};
+
+exports.get_user_info = function(req, res, next) {
+	async.parallel({
+		user: callback => User.findById(req.params.id).exec(callback),
+		convo: callback => Convo.findOne({users: {$size: 2, $all: [req.params.id, req.user._id]}}).populate('users').populate('messages').exec(callback)
+	}, (err, results) => {
+		if(err) return next(err);
+		console.log(req.user.friends);
+		res.send({user: results.user, convo: results.convo, friends: req.user.friends});
 	});
 };

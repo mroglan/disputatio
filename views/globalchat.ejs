@@ -8,8 +8,8 @@
 			</div>
 			<div class="row" id="globalchat-content">
 				<div class="col-lg-6 col-sm-11 mx-auto">
-					<div class="message-box">
-						<div class="content overflow-auto pt-3">
+					<div class="message-box overflow-hidden">
+						<div class="content overflow-auto pt-3" id="content">
 							<% messages.forEach(function(message) { %>
 								<% if(message.writer._id.toString() == user._id.toString()) { %>
 									<div class="message float-right mb-2">
@@ -35,10 +35,61 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6 mx-auto" id="additional-info">
-					
+				<div class="col-lg-6 mx-auto overflow-hidden" id="additional-info" style="height:100%">
 				</div>
 			</div>
 		</div>
+	</div>
+</div>
+
+<input type="hidden" id="userId" value="<%= user._id %>">
+
+<div class="hidden">
+	<div id="profile-template" class="card">
+		<input type="hidden" id="convo-id" value="none">
+		<div class="card-header pb-0">
+			<div class="row no-gutters">
+				<div class="col-2" style="max-width:400px">
+					<div class="w-100 overflow-hidden rounded-circle border profile-pic-div">
+						<img class="img-fluid" style="min-height:100%;min-width:100%">
+					</div>
+				</div>
+				<div class="col pl-3">
+					<div class="row">
+						<div class="col-6">
+							<a style="text-decoration:none">
+								<h5 class="text-primary"></h5>
+								<h6 class="text-dark"></h6>
+							</a>
+						</div>
+						<div class="col-6 text-right">
+							<button type="button" class="btn friend-btn" style="z-index:12"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" class="userInfoId">
+		</div>
+		<div class="card-body py-1">
+			
+		</div>
+	</div>
+</div>
+
+<div class="hidden" id="new-convo-holder">
+	<div id="convo-template" class="overflow-hidden">
+		<div class="message-box overflow-hidden" style="max-height:400px">
+			<div class="content overflow-auto pt-3" style="max-height:300px">
+			</div>
+			<div class="writing">
+				<textarea onkeypress="checkEnter2(event)" id="message3" required placeholder="Type your message here"></textarea><br>
+				<button type="submit" class="btn btn-primary" id="send-msg-btn3">Send</button>
+			</div>
+		</div>
+	</div>
+	
+	<div id="new-convo">
+		<input type="text" id="new-convo-name" class="form-control" placeholder="Conversation name">
+		<button type="button" id="new-convo-btn" class="btn btn-success">Create</button>
 	</div>
 </div>

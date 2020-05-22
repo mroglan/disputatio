@@ -94,7 +94,11 @@ exports.conversations_create = [
 					}
 					Convo.findByIdAndUpdate(convo._id, {messages: messagesArray, new_messages: newMessages}, (err, something) => {
 						if(err) return next(err);
-						res.redirect(convo.url);
+						if(req.body.globalchat) {
+							res.send({message: message.message, id: convo._id});
+						} else {
+							res.redirect(convo.url);
+						}
 					});
 				});
 			});
