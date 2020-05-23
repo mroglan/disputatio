@@ -1,0 +1,7 @@
+input {
+    color: white;
+}
+
+input:focus {
+    color: white;
+}

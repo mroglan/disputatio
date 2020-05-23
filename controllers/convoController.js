@@ -321,7 +321,7 @@ exports.convo_remove_members = function(req, res, next) {
 };
 
 exports.get_new_messages = function(req, res, next) {
-	console.log('HERE: ' + req.params.id);
+	//console.log('HERE: ' + req.params.id);
 	Convo.findById(req.params.id).populate({path: 'new_messages.messages.messages', model: 'Message'}).populate({path: 'messages', populate: {path: 'writer', model: 'User'}}).exec((err, convo) => {
 		let index;
 		let x = req.body.id;
