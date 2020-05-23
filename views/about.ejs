@@ -1,0 +1,247 @@
+<div style="background:rgba(191,172,172,.5);min-height:100vh">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="/disputatio">Disputatio</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			
+			<div class="collapse navbar-collapse" id="navbarContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/disputatio/home">Home</a>
+					</li>
+					<li class="nav-item active">
+						<a class="nav-link" href="/disputatio/about">About</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/disputatio/games">Games</a>
+					</li>
+				</ul>
+				<form class="form-inline" method="POST" action="/disputatio/search">
+					<div class="form-group my-0">
+						<input class="mr-sm-2 bg-transparent border-top-0 border-left-0 border-right-0 rounded-0" style="border-bottom:1px solid white" type="text" placeholder="Search" aria-label="Search">
+					</div>
+					<button type="submit" class="btn btn-outline-success">Search</button>
+				</form>
+			</div>
+		</div>
+	</nav>
+	<div class="container pt-5" style="background:rgba(28,25,25, .75);min-height:100vh">
+		<div class="row" style="color:rgba(26,45,210)">
+			<div class="col-12 text-center"><h1 class="display-3">About Disputatio</h1></div>
+			<div class="col-xl-6 col-lg-8 text-center mx-auto">
+				<ul class="list-group list-group-horizontal bg-dark flex-sm-nowrap" id="about-nav">
+					<a href="#general" class="list-group-item list-group-item-action bg-dark text-light py-2">General</a>
+					<a href="#globalchat" class="list-group-item list-group-item-action bg-dark text-light py-2"><nobr>Global Chat</nobr></a>
+					<a href="#groups" class="list-group-item list-group-item-action bg-dark text-light py-2">Groups</a>
+					<a href="#convos" class="list-group-item list-group-item-action bg-dark text-light py-2">Conversations</a>
+				</ul>
+			</div>
+		</div>
+		<hr class="mt-0" style="background-color:rgba(26,45,210)">
+		<div class="row d-flex flex-wrap justify-content-center">
+			<blockquote class="blockquote text-light px-3">
+				<p class="mb-0">“It's the job that's never started as takes longest to finish.”</p>
+				<footer class="blockquote-footer">J.R.R. Tolkien</footer>
+			</blockquote>
+			<a href="/disputatio/home">
+				<button type="button" class="btn btn-dark text-danger"><h1>Register Now!</h1></button>
+			</a>
+		</div>
+		<div class="row mt-3">
+			<div class="col-12">
+				<h1 class="rounded-pill d-inline-block py-2 px-5" id="general" style="background-color:rgba(25,27,39);color:rgba(26,45,210)">General</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-4">
+				<div class="list-group bg-dark" role="tablist">
+					<a class="list-group-item list-group-item-action active bg-dark text-light" id="puropose-label" data-toggle="list" href="#purpose" role="tab" aria-controls="purpose">Purpose</a>
+					<a class="list-group-item list-group-item-action bg-dark text-light" id="feature-label" data-toggle="list" href="#features" role="tab" aria-controls="features">Features</a>
+					<a class="list-group-item list-group-item-action bg-dark text-light" id="community-label" data-toggle="list" href="#community" role="tab" aria-controls="community">Community</a>
+					<a class="list-group-item list-group-item-action bg-dark text-light" id="future-label" data-toggle="list" href="#future" role="tab" aria-controls="future">Future</a>
+				</div>
+			</div>
+			<div class="col-8">
+				<div class="tab-content text-light">
+					<div class="tab-pane fade show active" id="purpose" role="tabpanel" aria-labelledby="purpose-label">
+						<div class="row">
+							<div class="col-sm-8">
+								<p>Disputatio is an interactive, user-friendly communication application where users can interact with other humans at a scale definitely seen before.
+								Disputatio offers users unique tools in order to better communicate with other life forms. If you don't like it, you don't have to use it but that will 
+								create long term problems you may not have anticipated.</p>
+							</div>
+							<div class="col">
+								<img style="max-width:200px" src="https://lh3.googleusercontent.com/proxy/2GjQHTOfPzuneKJ8QuXbNXqSn43uDuceZIdF9LT9TRfs0KicZ31LbiDu2Wm1GcaM_3EbaVaWUkP_8Kwg-b1nipeKItq-Ogw">
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="features" role="tabpanel" aria-labelledby="feature-label">
+						<div class="row">
+							<div class="col-sm-8">
+								<p>Disputatio offers unique features which users can take advantage of to improve their experience. From a simple global chat, to simple individual
+								conversation tools, Disputatio gives its users a myraid of options to better express themselves. Users can create and customize groups, customize their
+								unique profile, and meet new users across the globe.</p>
+							</div>
+							<div class="col">
+								<img style="max-width:200px" src="https://www.pinclipart.com/picdir/middle/149-1498769_it-is-always-worth-asking-the-young-people.png">
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="community" role="tabpanel" aria-labelledby="community-label">
+						<div class="row">
+							<div class="col-sm-8">
+								<p>Join an impressive community of over 2 people. Compete with adversaries in some of our custom games, meet new community members in the global chat 
+								or in groups, and take advantage of the most gullible in our community!</p>
+							</div>
+							<div class="col">
+								<img style="max-width:200px" src="https://storytailer.com/wp-content/uploads/2014/12/eye-of-sauron-lord-of-the-rings-return-of-the-king.jpg">
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="future" role="tabpanel" aria-labelledby="future-label">
+						<div class="row">
+							<div class="blockquote col-sm-8">
+								<p class="mb-0">“But in the end it's only a passing thing... even [this app] must pass.”</p>
+								<footer class="blockquote-footer">J.R.R. Tolkien</footer>
+							</div>
+							<div class="col">
+								<img style="max-width:200px" src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/Mount_Doom_%28Tolkien%29.jpg/240px-Mount_Doom_%28Tolkien%29.jpg">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col-12">
+				<h1 class="rounded-pill d-inline-block py-2 px-5" id="globalchat" style="background-color:rgba(25,27,39);color:rgba(26,45,210)">Global Chat</h1>
+			</div>
+			<div class="col-md-6">
+				<div class="card bg-transparent border-secondary rounded-lg h-100">
+					<div class="card-header">
+						<h1 class="card-title white-1">Easy to use chat!</h1>
+					</div>
+					<img src="/images/globalchat.png" class="card-img-top">
+					<div class="card-body text-light">
+						<p class="card-text">Write awesome messgaes to a global audience!</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card bg-transparent border-secondary rounded-lg h-100">
+					<div class="card-header">
+						<h1 class="card-title white-1">Meet new users!</h1>
+					</div>
+					<img src="/images/globalfriend.png" class="card-img-top">
+					<div class="card-body text-light">
+						<p class="card-text">Simply click on a user's tag to view their name, tag and image.</p>
+						<p class="card-text">Click on the "Friend" button to add them to your friends, or if they are already a friend,
+						you can choose to unfriend them.</p>
+						<p class="card-text">If you already have a conversation with the user, you will have the option to continue
+						that private conversation while still on global chat!</p>
+					</div>
+					<img src="/images/globalconvo.png" class="card-img-top">
+				</div>
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col-12">
+				<h1 class="rounded-pill d-inline-block py-2 px-5" id="groups" style="background-color:rgba(25,27,39);color:rgba(26,45,210)">Groups</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<h1 class="white-1">What are groups?</h1>
+				<p class="text-light">Groups are exactly what the name suggests: groups! Within a group, you can make new posts, or interact with previous posts.
+				Some groups may appeal to lots of users, while others may only be for people with specific interests. Join as many groups as you want and create some 
+				of your own!</p>
+			</div>
+			<div class="col-md-4">
+				<img src="/images/fish.png" class="pt-md-5 w-100">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="white-1">Awesome Posts</h1>
+				<p class="text-light">Each post can carry a variety of information. You can give your post a title, a message, files, and images! You can also 
+				tag other members in your posts (e.g. &lt;user123&gt;), allowing people who view your post to check out their profile!</p>
+			</div>
+			<div class="col-md-6">
+				<img src="/images/grouppost.png" class="w-100">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="white-1">Interact with Posts</h1>
+				<p class="text-light">Interact with other posts or your own by liking or disliking, sharing to other groups, or adding a comment. You can also see 
+				the how many shares, replies, likes, and dislikes any post in your group has!</p>
+			</div>
+			<div class="col-md-6">
+				<img src="/images/postinfo.png" class="w-100 pt-md-5">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<h1 class="white-1">Group Info</h1>
+				<p class="text-light">The creator of a group has the ability to change the group's picture, name, and description, as well as preferences that are discussed 
+				below. Depending on a group's preferences, you will be able to see a group's members, invite friends to groups, and join new groups!</p>
+			</div>
+			<div class="col-md-4">
+				<img src="/images/groupinfo.png">	
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<h1 class="white-1">Group Preferences</h1>
+				<p class="text-light">A group can either be set as "open", "invite only", or "closed". Open groups allow users who are not part of the group to see all group posts,
+				to see all group members, and to join if they choose. Invite only groups allow users not part of the group to see all group posts, to see all group members, but they
+				must either be invited to the group or have a group code to join. Closed groups do not allow users not part of the group to see all group posts, to see all group members,
+				and new members must either join through invitation by the group's creator or by using the group's code.</p>
+			</div>
+			<div class="col-md-4">
+				<img src="/images/closedgroup.png" class="w-100 pt-md-5">
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col-12">
+				<h1 class="rounded-pill d-inline-block py-2 px-5" id="convos" style="background-color:rgba(25,27,39);color:rgba(26,45,210)">Conversations</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card h-100 bg-transparent border-secondary rounded-lg">
+					<div class="card-header">
+						<h1 class="card-title white-1">User Friendly Chat!</h1>
+					</div>
+					<img src="/images/convo.png" class="card-img-top">
+					<div class="card-body text-light">
+						<p class="card-text mb-0">Type messages quickly and avoid having to press send by clicking "enter".</p>
+						<p class="card-text">View conversation members' messages in real time!</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card h-100 bg-transparent border-secondary rounded-lg">
+					<div class="card-header">
+						<h1 class="card-title white-1">User Selection!</h1>
+					</div>
+					<img src="/images/userselect.png" class="card-img-top">
+					<div class="card-body text-light">
+						<p class="card-text mb-0">Select and add multiple users to a conversation!</p>
+						<p class="card-text">If you created the conversation, you can also remove members.</p>
+					</div>
+					<img src="/images/userremove.png" class="card-img-top">
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="bg-secondary">
+		<div class="row d-flex justify-content-around text-light">
+			<div class="col-sm-4 text-center">BOB Inc.</div>
+			<div class="col-sm-4 text-center">bobhascome@gmail.com</div>
+			<div class="col-sm-4 text-center">Copyright 2020</div>
+		</div>
+	</footer>
+</div>

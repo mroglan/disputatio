@@ -1,0 +1,15 @@
+#about-nav a {
+	border: 1px solid rgba(26,45,210,.5);
+}
+
+.white-1 {
+	color: rgba(225, 215, 213);
+}
+
+input {
+    color: white;
+}
+
+input:focus {
+    color: white;
+}
